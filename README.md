@@ -1,6 +1,7 @@
 # ACNH-Pattern-Research
-Research on ACNH pattern data for fixing some save editor bugs.  
-This is in reference to fork: https://github.com/lottehime/NHSE
+Research on Animal Crossing: New Horizons design pattern data for fixing some save editor bugs.  
+~~This is in reference to fork: https://github.com/lottehime/NHSE~~  
+Results were submitted to NHSE master and merged! 🥳
 
 
 ### What is it?
@@ -10,12 +11,15 @@ I also noticed that for some pattern slots, the previous pattern name would rema
 
 It bugged me.
 
-So, I hacked together a fix and added it to a fork of NHSE which you can find here: https://github.com/lottehime/NHSE (source only)
-I also added a build to this repo while waiting for the pull request to resolve, so that you (and I) can use it without waiting.
+So, I hacked together a fix and added it to a fork of NHSE which you can find [here](https://github.com/lottehime/NHSE) (source only).  
+Current builds of [NHSE from the main website](https://berichan.github.io/GetNHSE/) now have this research implemented!  
+Builds removed from this repo now. 👍  
+~~I also added a build to this repo while waiting for the pull request to resolve, so that you (and I) can use it without waiting.~~  
+
 
 
 ## Research
-Pattern data is found in `main.dat` within the save, as are flags for if the player has edited the pattern slot.  
+Design pattern data is found in `main.dat` within the save, as are flags for if the player has edited the pattern slot.  
 An ID for the player and the town/island reside in `personal.dat` within the save.
 
 The pattern 'IsEdited' flags begin at offset `0x8BE260` starting with design 1 of 100. Each flag is a single byte and each byte begins as `0xFF` and is changed to `0x00` when the player edits that pattern slot.  
@@ -36,8 +40,8 @@ Storing these as a two byte arrays of `0x18` or 24 bytes length starting at each
 
 Patterns in `main.dat` start at offset `0x1E3968` and flow into one another.  
 Complete untrimmed pattern data is 680 bytes long, starting with a 16 byte hash and ending with 3 trailing `0x00` bytes after the image data.  
-This format matches what you will find in `*.acnh` files from https://acpatterns.com/, files from other editors may be trimmed.  
-We can use a `*.acnh` file to isolate the data we are interested in.
+This format matches what you will find in `*.acnl` files from https://acpatterns.com/ and `*.nhd` files from NHSE, files from other editors may be trimmed.  
+We can use a `*.nhd` file to isolate the data we are interested in.
 
 The structure of the pattern file is roughly as follows:  
 `0x000 -> 0x00F`:   pattern hash - (16 bytes long)  
