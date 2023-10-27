@@ -1,5 +1,6 @@
 # ACNH-Pattern-Research
-Research on ACNH pattern data for fixing some save editor bugs.
+Research on ACNH pattern data for fixing some save editor bugs.  
+This is in reference to: https://github.com/lottehime/NHSE
 
 
 ### What is it?
