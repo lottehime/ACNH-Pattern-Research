@@ -11,7 +11,7 @@ I also noticed that for some pattern slots, the previous pattern name would rema
 
 It bugged me.
 
-So, I hacked together a fix and added it to a fork of NHSE which you can find [here](https://github.com/lottehime/NHSE) (source only).  
+So, I hacked together a fix and added it to a fork of NHSE which [you can find here](https://github.com/lottehime/NHSE) (source only).  
 Current builds of [NHSE from the main website](https://berichan.github.io/GetNHSE/) now have this research implemented!  
 Builds removed from this repo now. 👍  
 ~~I also added a build to this repo while waiting for the pull request to resolve, so that you (and I) can use it without waiting.~~  
