@@ -40,7 +40,7 @@ Storing these as a two byte arrays of `0x18` or 24 bytes length starting at each
 
 Patterns in `main.dat` start at offset `0x1E3968` and flow into one another.  
 Complete untrimmed pattern data is 680 bytes long, starting with a 16 byte hash and ending with 3 trailing `0x00` bytes after the image data.  
-This format matches what you will find in `*.acnl` files from https://acpatterns.com/ and `*.nhd` files from NHSE, files from other editors may be trimmed.  
+This format matches what you will find in `*.acnh` files from https://acpatterns.com/ and `*.nhd` files from NHSE, files from other editors may be trimmed.  
 We can use a `*.nhd` file to isolate the data we are interested in.
 
 The structure of the pattern file is roughly as follows:  
