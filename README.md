@@ -47,16 +47,16 @@ We can use a `*.nhd` file to isolate the data we are interested in.
 
 The structure of the pattern file is roughly as follows:  
 `0x000 -> 0x00F`: pattern hash - (16 bytes long)  
-`0x010 -> 0x037`: pattern name - (20 character name with separating `0x00`, 40 bytes long)  
+`0x010 -> 0x037`: pattern name - (20 char name with separating `0x00`, 40 bytes long)  
 `0x038 -> 0x03B`: town ID - (4 bytes long)  
-`0x03C -> 0x04F`: town name - (10 character name with separating `0x00`, 20 bytes long)  
+`0x03C -> 0x04F`: town name - (10 char name with separating `0x00`, 20 bytes long)  
 `0x050 -> 0x053`: padding? - (4 bytes long)  
 `0x054 -> 0x057`: player ID - (4 bytes long)  
-`0x058 -> 0x06B`: player name - (10 character name with separating `0x00`, 20 bytes long)  
+`0x058 -> 0x06B`: player name - (10 char name with separating `0x00`, 20 bytes long)  
 `0x06C -> 0x06F`: padding? - (4 bytes long)  
 `0x070 -> 0x073`: ownership flag? - (4 bytes long)  
 `0x074 -> 0x077`: unknown flag? - (4 bytes long)
-`0x078 -> 0x2A4`: palette and pixel data - (not delving into specifics, 557 bytes long)  
+`0x078 -> 0x2A4`: palette and pixel data - (557 bytes long)  
 `0x2A5 -> 0x2A7`: trailing padding - (3 bytes long)  
 
 If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and inject it at offsets `0x54` and `0x38` respectively, then write these back to their correct location in `main.dat` (main pattern offset + index) we end up with a pattern written with the image we wanted, and the correct player and town IDs. Then we can overwrite the data at `0x70` with `0x00, 0x00, 0x00, 0x00`. This allows the user to own/edit them in-game.
