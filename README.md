@@ -26,7 +26,7 @@ The pattern 'IsEdited' flags begin at offset `0x8BE260` starting with design 1 o
 Add `0x64` to that offset to get to the design PRO patterns at offset `0x8BE2C4` starting with design 1 of 100. The bytes follow the same pattern as above.  
 This fixes the issue of imported patterns retaining the name of the pattern originally in that slot.
 
-The issue of pattern ownership and editability is caused by the pattern data not being written to `main.dat` with the players IDs correctly.  
+The issue of pattern ownership and editability is caused by the pattern data not being written to `main.dat` with the players IDs correctly, as well as what appears to be a flag value that needs to be reset.  
 The players ID information can be found within `personal.dat` starting at offset `0xB0B8`. It can also be found in other locations, such as `main.dat` before the pattern offsets.  
 It is made up of two primary parts: the `PlayerID` and `TownID`, which are each made up of two parts; the `ID` and the `Name`.
 
@@ -38,25 +38,28 @@ The 20 bytes represent the name as a 10 character long name with `0x00` between 
 
 Storing these as a two byte arrays of `0x18` or 24 bytes length starting at each of their respective offsets allows us to then write them into the data for the patterns as we insert them into `main.dat`.
 
+The flag value that follows them appears to be 4 bytes long and replacing each byte with `0x00` seems to modify ownership so long as the above ID values match what the game expects correctly.
+
 Patterns in `main.dat` start at offset `0x1E3968` and flow into one another.  
 Complete untrimmed pattern data is 680 bytes long, starting with a 16 byte hash and ending with 3 trailing `0x00` bytes after the image data.  
 This format matches what you will find in `*.acnh` files from https://acpatterns.com/ and `*.nhd` files from NHSE, files from other editors may be trimmed.  
 We can use a `*.nhd` file to isolate the data we are interested in.
 
 The structure of the pattern file is roughly as follows:  
-`0x000 -> 0x00F`:   pattern hash - (16 bytes long)  
-`0x010 -> 0x037`:   pattern name - (20 character name with separating `0x00`, 40 bytes long)  
-`0x038 -> 0x03B`:   town ID - (4 bytes long)  
-`0x03C -> 0x04F`:   town name - (10 character name with separating `0x00`, 20 bytes long)  
-`0x050 -> 0x053`:   padding? - (4 bytes long)  
-`0x054 -> 0x057`:   player ID - (4 bytes long)  
-`0x058 -> 0x06B`:   player name - (10 character name with separating `0x00`, 20 bytes long)  
-`0x06C -> 0x06F`:   padding? - (4 bytes long)  
-`0x070 -> 0x077`:   unknown flag? - (8 bytes long)  
-`0x078 -> 0x2A4`:  palette and pixel data - (not delving into specifics, 557 bytes long)  
+`0x000 -> 0x00F`: pattern hash - (16 bytes long)  
+`0x010 -> 0x037`: pattern name - (20 character name with separating `0x00`, 40 bytes long)  
+`0x038 -> 0x03B`: town ID - (4 bytes long)  
+`0x03C -> 0x04F`: town name - (10 character name with separating `0x00`, 20 bytes long)  
+`0x050 -> 0x053`: padding? - (4 bytes long)  
+`0x054 -> 0x057`: player ID - (4 bytes long)  
+`0x058 -> 0x06B`: player name - (10 character name with separating `0x00`, 20 bytes long)  
+`0x06C -> 0x06F`: padding? - (4 bytes long)  
+`0x070 -> 0x073`: ownership flag? - (4 bytes long)  
+`0x074 -> 0x077`: unknown flag? - (4 bytes long)
+`0x078 -> 0x2A4`: palette and pixel data - (not delving into specifics, 557 bytes long)  
 `0x2A5 -> 0x2A7`: trailing padding - (3 bytes long)  
 
-If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and inject it at offsets `0x54` and `0x38` respectively, then write these back to their correct location in `main.dat` (main pattern offset + index) we end up with a pattern written with the image we wanted, and the correct player and town IDs. This allows the user to own/edit them in-game.
+If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and inject it at offsets `0x54` and `0x38` respectively, then write these back to their correct location in `main.dat` (main pattern offset + index) we end up with a pattern written with the image we wanted, and the correct player and town IDs. Then we can overwrite the data at `0x70` with `0x00, 0x00, 0x00, 0x00`. This allows the user to own/edit them in-game.
 
 When you mix the pattern being updated with the players IDs correctly, and the IsEdited flags flipped to edited you get a correctly named and editable pattern imported into your save. Yay!
 
