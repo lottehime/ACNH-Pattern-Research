@@ -55,7 +55,7 @@ The structure of the pattern file is roughly as follows:
 `0x058 -> 0x06B`: player name - (10 char name with separating `0x00`, 20 bytes long)  
 `0x06C -> 0x06F`: padding? - (4 bytes long)  
 `0x070 -> 0x073`: ownership flag? - (4 bytes long)  
-`0x074 -> 0x077`: unknown flag? - (4 bytes long)
+`0x074 -> 0x077`: unknown flag? - (4 bytes long)  
 `0x078 -> 0x2A4`: palette and pixel data - (557 bytes long)  
 `0x2A5 -> 0x2A7`: trailing padding - (3 bytes long)  
 
