@@ -5,7 +5,9 @@ Results were submitted to NHSE master and merged! 🥳
 
 
 ### What is it?
-I noticed when using NHSE and ACNHDesignPatternEditor that under certain conditions, importing pattern files (`*.nhd` or `*.acnh`) did not seem to set the patterns as owned by the player and thus they were not editable in-game, much like if they were QR codes or from the pattern exchange.
+⚠️WIP, currently adding info and formatting better!⚠️
+
+I noticed when using NHSE and different design editors that under certain conditions, importing pattern files (`*.nhd` or `*.acnh`) did not seem to set the patterns as owned by the player and thus they were not editable in-game, much like if they were QR codes or from the pattern exchange.
 
 I also noticed that for some pattern slots, the previous pattern name would remain in place of the imported one.
 
@@ -48,382 +50,67 @@ We can use a `*.nhd` file to isolate the data we are interested in.
 The structure of the pattern file is roughly as follows:  
 
 ### ACNH Design Pattern Data:
-`0x000 -> 0x00F`: pattern hash - (16 bytes long)  
-`0x010 -> 0x037`: pattern name - (40 bytes long, 20 char name with separating `0x00`)  
-`0x038 -> 0x03B`: town ID - (4 bytes long)  
-`0x03C -> 0x04F`: town name - (20 bytes long, 10 char name with separating `0x00`)  
-`0x050 -> 0x053`: padding? - (4 bytes long)  
-`0x054 -> 0x057`: player ID - (4 bytes long)  
-`0x058 -> 0x06B`: player name - (20 bytes long, 10 char name with separating `0x00`)  
-`0x06C -> 0x06F`: padding? - (4 bytes long)  
-`0x070 -> 0x073`: ownership flag? - (4 bytes long)  
-`0x074 -> 0x076`: padding? - (3 bytes long)  
-`0x077 -> 0x077`: pattern type - (1 byte long, see below)  
-`0x078 -> 0x0A4`: palette data - (45 bytes long, 15*3, 15 colors 3 bytes each (rgb))  
-`0x0A5 -> 0x2A4`: pixel data - (512 bytes long, pro designs except this, see below)  
-`0x2A5 -> 0x2A7`: trailing padding - (3 bytes long)  
+|  Offset & Range  | Data Purpose                                                         | Data Type     |
+|      :---:       | :---                                                                 | :---          |
+| `0x000 -> 0x00F` | pattern hash - (16 bytes long)                                       | UInt16/UInt32 |
+| `0x010 -> 0x037` | pattern name - (40 bytes long, 20 char name with separating `0x00`)  | ASCII/UTF-8   |
+| `0x038 -> 0x03B` | town ID - (4 bytes long)                                             | UInt16/UInt32 |
+| `0x03C -> 0x04F` | town name - (20 bytes long, 10 char name with separating `0x00`)     | ASCII/UTF-8   |
+| `0x050 -> 0x053` | padding? - (4 bytes long)                                            | Byte          |
+| `0x054 -> 0x057` | player ID - (4 bytes long)                                           | UInt16/UInt32 |
+| `0x058 -> 0x06B` | player name - (20 bytes long, 10 char name with separating `0x00`)   | ASCII/UTF-8   |
+| `0x06C -> 0x06F` | padding? - (4 bytes long)                                            | Byte          |
+| `0x070 -> 0x073` | ownership flag? - (4 bytes long)                                     | Byte          |
+| `0x074 -> 0x076` | padding? - (3 bytes long)                                            | Byte          |
+| `0x077 -> 0x077` | pattern type - (1 byte long, see below)                              | Byte          |
+| `0x078 -> 0x0A4` | palette data - (45 bytes long, 15*3, 15 colors 3 bytes each (rgb))   | UInt8         |
+| `0x0A5 -> 0x2A4` | pixel data - (512 bytes long, pro designs except this, see below)    | UInt8         |
+| `0x2A5 -> 0x2A7` | trailing padding - (3 bytes long)                                    | Byte          |
 
-<details>
-  <summary>Pattern Type Values:</summary>
-  
-`0x00`: Simple Pattern  
-`0x01`: Empty Pro Pattern  
-`0x02`: Simple Shirt  
-`0x03`: Long Sleeve Shirt  
-`0x04`: T Shirt  
-`0x05`: Tanktop  
-`0x06`: Pullover  
-`0x07`: Hoodie  
-`0x08`: Coat  
-`0x09`: Short Sleeve Dress  
-`0x0A`: Sleeveless Dress  
-`0x0B`: Long Sleeve Dress  
-`0x0C`: Balloon Dress  
-`0x0D`: Round Dress  
-`0x0E`: Robe  
-`0x0F`: Brimmed Cap  
-`0x10`: Knit Cap  
-`0x11`: Brimmed Hat  
-`0x12`: Short Sleeve Dress 3DS (ACNL Support)  
-`0x13`: Long Sleeve Dress 3DS (ACNL Support)  
-`0x14`: Sleeveless Dress 3DS (ACNL Support)  
-`0x15`: Short Sleeve Shirt 3DS (ACNL Support)  
-`0x16`: Long Sleeve Shirt3DS (ACNL Support)  
-`0x17`: Sleeveless Shirt 3DS (ACNL Support)  
-`0x18`: Hat 3DS (ACNL Support)  
-`0x19`: Horn Hat 3DS (ACNL Support)  
-`0x1E`: Standee 3DS (ACNL Support)  
-`0x1A`: Standee  
-`0x1B`: Umbrella  
-`0x1C`: Flag  
-`0x1D`: Fan  
-`0xFF`: Unsupported  
+### Pattern Type Values:
+| Index Value | Type Indicator                         | Data Type | ACNL Equiv.      |
+|    :---:    | :---                                   | :---      | :---             |
+| `0x00`      | Simple Pattern                         | Byte      | ✔️ `0x09`        |
+| `0x01`      | Empty Pro Pattern                      | Byte      | ❌ Not supported |
+| `0x02`      | Simple Shirt                           | Byte      | ❌ Not supported |
+| `0x03`      | Long Sleeve Shirt                      | Byte      | ❌ Not supported |
+| `0x04`      | T Shirt                                | Byte      | ❌ Not supported |
+| `0x05`      | Tanktop                                | Byte      | ❌ Not supported |
+| `0x06`      | Pullover                               | Byte      | ❌ Not supported |
+| `0x07`      | Hoodie                                 | Byte      | ❌ Not supported |
+| `0x08`      | Coat                                   | Byte      | ❌ Not supported |
+| `0x09`      | Short Sleeve Dress                     | Byte      | ❌ Not supported |
+| `0x0A`      | Sleeveless Dress                       | Byte      | ❌ Not supported |
+| `0x0B`      | Long Sleeve Dress                      | Byte      | ❌ Not supported |
+| `0x0C`      | Balloon Dress                          | Byte      | ❌ Not supported |
+| `0x0D`      | Round Dress                            | Byte      | ❌ Not supported |
+| `0x0E`      | Robe                                   | Byte      | ❌ Not supported |
+| `0x0F`      | Brimmed Cap                            | Byte      | ❌ Not supported |
+| `0x10`      | Knit Cap                               | Byte      | ❌ Not supported |
+| `0x11`      | Brimmed Hat                            | Byte      | ❌ Not supported |
+| `0x12`      | Short Sleeve Dress 3DS                 | Byte      | ✔️ `0x01`        |
+| `0x13`      | Long Sleeve Dress 3DS                  | Byte      | ✔️ `0x00`        |
+| `0x14`      | Sleeveless Dress 3DS                   | Byte      | ✔️ `0x02`        |
+| `0x15`      | Short Sleeve Shirt 3DS                 | Byte      | ✔️ `0x04`        |
+| `0x16`      | Long Sleeve Shirt 3DS                  | Byte      | ✔️ `0x03`        |
+| `0x17`      | Sleeveless Shirt 3DS                   | Byte      | ✔️ `0x05`        |
+| `0x18`      | Hat 3DS                                | Byte      | ✔️ `0x07`        |
+| `0x19`      | Horn Hat 3DS                           | Byte      | ✔️ `0x06`        |
+| `0x1E`      | Standee 3DS                            | Byte      | ✔️ `0x08`        |
+| `0x1A`      | Standee                                | Byte      | ❌ Not supported |
+| `0x1B`      | Umbrella                               | Byte      | ❌ Not supported |
+| `0x1C`      | Flag                                   | Byte      | ❌ Not supported |
+| `0x1D`      | Fan                                    | Byte      | ❌ Not supported |
+| `0xFF`      | Unsupported                            | Byte      | N/A              |
 
-</details>
-
-<details>
-  <summary>PRO Design Pattern Exception:</summary>
-
+### PRO Design Pattern Exception:
 For PRO Design Patterns, the pixel data is longer and is followed by the same termination padding.  
 See below:  
-`0x0A5 -> 0x8A4`: pixel data - (2048 bytes long)  
-`0x8A5 -> 0x8A7`: trailing padding - (3 bytes long)  
 
-</details>
-
-### ACNL Interoperability
-Due to the QR code import in ACNH that supports ACNL designs, interoperability is fairly straight forward.  
-The ACNL design pattern data format shares similarities with the ACNH format in that it contains name strings, ID bytes, hashes, pattern type bytes, a color palette and pixel data.
-
-To convert the data between, you simply need to adjust values as required and move the data to the correct offsets.  
-The structure is per below:
-
-<details>
-  <summary>ACNL Pattern Data:</summary>
-
-`0x000 -> 0x029`: pattern name (42 bytes long, 20 char name with separating `0x00` with terminating dual `0x00`)  
-`0x02A -> 0x02B`: user ID (2 bytes long)  
-`0x02C -> 0x03F`: user name (20 bytes long, 9 char name with separating `0x00` and a terminating `0x01`)  
-`0x040 -> 0x041`: town id (2 bytes long)  
-`0x042 -> 0x055`: town name (20 bytes long, 9 char name with separating `0x00` and a terminating `0x01`)  
-`0x056 -> 0x057`: unknown flag? (2 bytes long, values seem random)  
-`0x058 -> 0x066`: palette data (15 bytes long, value is an index lookup, see below)  
-`0x067 -> 0x067`: unknown flag? (1 byte long, value seems random)  
-`0x068 -> 0x068`: ownership flag? (1 byte long, appeats to be `0x00` or `0x0A` only)  
-`0x069 -> 0x069`: pattern type (1 byte long, see below)  
-`0x06A -> 0x 6B`: padding (2 bytes long)  
-`0x06C -> 0x26B`: pixel data main (512 bytes long, main pixels)  
-`0x26C -> 0x46B`: pixel data expanded 1 (512 bytes long, extra pro pattern pixels)  
-`0x46C -> 0x66B`: pixel data expanded 2 (512 bytes long, extra pro pattern pixels)  
-`0x66C -> 0x86B`: pixel data expanded 3 (512 bytes long, extra pro pattern pixels)  
-`0x86C -> 0x86F`: trailing padding (4 bytes long, appears optional)  
-
-</details>
-
-For strings (names), either trim or expand them to match the format (ACNL -> ACNH expand, ACNH -> ACNL trim).  
-The same can be said for the ID bytes.
-
-Pattern types are cross supported (ACNH has pattern types for the ACNL patterns). Simply match up the type value correctly from each index.
-
-<details>
-  <summary>ACNL Pattern Types Values:</summary>
-
-`0x00`: Long Sleeve Dress (Pro)  
-`0x01`: Short Sleeve Dress (Pro)  
-`0x02`: Sleeveless Dress (Pro)  
-`0x03`: Long Sleeve Shirt (Pro)  
-`0x04`: Short Sleeve Shirt (Pro)  
-`0x07`: Plain Pattern (Hat)  
-`0x08`: Standee (Pro)  
-`0x09`: Simple Pattern (Easel)  
-
-</details>
-
-The color palette for ACNL is comprised of 159 fixed colors with an index to be looked up, unlike ACNH which supports a wide selection of RGBA colors.  
-To convert from ACNH to ACNL format a closest matching color function needs to be run against the ACNH color to find the closest one in the ACNL index for each of the 15 colors. The color is then represented in the palette as that single index byte instead of the 3 bytes for RGB used by ACNH.  
-To convert in the other direction, a straight conversion can be made by taking the index and it's known color value and writing out the three values.
-
-<details>
-  <summary>ACNL Color Palette Index:</summary>
-
-`0x00`: color.RGBA { 0xFF, 0xEE, 0xFF, 0xFF} //Pink (0x00 - 0x08)  
-`0x01`: color.RGBA { 0xFF, 0x99, 0xAA, 0xFF}  
-`0x02`: color.RGBA { 0xEE, 0x55, 0x99, 0xFF}  
-`0x03`: color.RGBA { 0xFF, 0x66, 0xAA, 0xFF}  
-`0x04`: color.RGBA { 0xFF, 0x00, 0x66, 0xFF}  
-`0x05`: color.RGBA { 0xBB, 0x44, 0x77, 0xFF}  
-`0x06`: color.RGBA { 0xCC, 0x00, 0x55, 0xFF}  
-`0x07`: color.RGBA { 0x99, 0x00, 0x33, 0xFF}  
-`0x08`: color.RGBA { 0x55, 0x22, 0x33, 0xFF}  
-`0x09`: color.empty,  
-`0x0A`: color.empty,  
-`0x0B`: color.empty,  
-`0x0C`: color.empty,  
-`0x0D`: color.empty,  
-`0x0E`: color.empty,  
-`0x0F`: color.RGBA { 0xFF, 0xFF, 0xFF, 0xFF} //0x0F: Grey 1 (White)  
-`0x10`: color.RGBA { 0xFF, 0xBB, 0xCC, 0xFF} //Red (0x10 - 0x18)  
-`0x11`: color.RGBA { 0xFF, 0x77, 0x77, 0xFF}  
-`0x12`: color.RGBA { 0xDD, 0x32, 0x10, 0xFF}  
-`0x13`: color.RGBA { 0xFF, 0x55, 0x44, 0xFF}  
-`0x14`: color.RGBA { 0xFF, 0x00, 0x00, 0xFF}  
-`0x15`: color.RGBA { 0xCC, 0x66, 0x66, 0xFF}  
-`0x16`: color.RGBA { 0xBB, 0x44, 0x44, 0xFF}  
-`0x17`: color.RGBA { 0xBB, 0x00, 0x00, 0xFF}  
-`0x18`: color.RGBA { 0x88, 0x22, 0x22, 0xFF}  
-`0x19`: color.empty,  
-`0x1A`: color.empty,  
-`0x1B`: color.empty,  
-`0x1C`: color.empty,  
-`0x1D`: color.empty,  
-`0x1E`: color.empty,  
-`0x1F`: color.RGBA { 0xEE, 0xEE, 0xEE, 0xFF} //0x1F: Grey 2  
-`0x20`: color.RGBA { 0xDD, 0xCD, 0xBB, 0xFF} //Orange (0x20 - 0x28)  
-`0x21`: color.RGBA { 0xFF, 0xCD, 0x66, 0xFF}  
-`0x22`: color.RGBA { 0xDD, 0x66, 0x22, 0xFF}  
-`0x23`: color.RGBA { 0xFF, 0xAA, 0x22, 0xFF}  
-`0x24`: color.RGBA { 0xFF, 0x66, 0x00, 0xFF}  
-`0x25`: color.RGBA { 0xBB, 0x88, 0x55, 0xFF}  
-`0x26`: color.RGBA { 0xDD, 0x44, 0x00, 0xFF}  
-`0x27`: color.RGBA { 0xBB, 0x44, 0x00, 0xFF}  
-`0x28`: color.RGBA { 0x66, 0x32, 0x10, 0xFF}  
-`0x29`: color.empty,  
-`0x2A`: color.empty,  
-`0x2B`: color.empty,  
-`0x2C`: color.empty,  
-`0x2D`: color.empty,  
-`0x2E`: color.empty,  
-`0x2F`: color.RGBA { 0xDD, 0xDD, 0xDD, 0xFF} //0x2F: Grey 3  
-`0x30`: color.RGBA { 0xFF, 0xEE, 0xDD, 0xFF} //Peach (0x30 - 0x38)  
-`0x31`: color.RGBA { 0xFF, 0xDD, 0xCC, 0xFF}  
-`0x32`: color.RGBA { 0xFF, 0xCD, 0xAA, 0xFF}  
-`0x33`: color.RGBA { 0xFF, 0xBB, 0x88, 0xFF}  
-`0x34`: color.RGBA { 0xFF, 0xAA, 0x88, 0xFF}  
-`0x35`: color.RGBA { 0xDD, 0x88, 0x66, 0xFF}  
-`0x36`: color.RGBA { 0xBB, 0x66, 0x44, 0xFF}  
-`0x37`: color.RGBA { 0x99, 0x55, 0x33, 0xFF}  
-`0x38`: color.RGBA { 0x88, 0x44, 0x22, 0xFF}  
-`0x39`: color.empty,  
-`0x3A`: color.empty,  
-`0x3B`: color.empty,  
-`0x3C`: color.empty,  
-`0x3D`: color.empty,  
-`0x3E`: color.empty,  
-`0x3F`: color.RGBA { 0xCC, 0xCD, 0xCC, 0xFF} //0x3F: Grey 4  
-`0x40`: color.RGBA { 0xFF, 0xCD, 0xFF, 0xFF} //Purple (0x40 - 0x48)  
-`0x41`: color.RGBA { 0xEE, 0x88, 0xFF, 0xFF}  
-`0x42`: color.RGBA { 0xCC, 0x66, 0xDD, 0xFF}  
-`0x43`: color.RGBA { 0xBB, 0x88, 0xCC, 0xFF}  
-`0x44`: color.RGBA { 0xCC, 0x00, 0xFF, 0xFF}  
-`0x45`: color.RGBA { 0x99, 0x66, 0x99, 0xFF}  
-`0x46`: color.RGBA { 0x88, 0x00, 0xAA, 0xFF}  
-`0x47`: color.RGBA { 0x55, 0x00, 0x77, 0xFF}  
-`0x48`: color.RGBA { 0x33, 0x00, 0x44, 0xFF}  
-`0x49`: color.empty,  
-`0x4A`: color.empty,  
-`0x4B`: color.empty,  
-`0x4C`: color.empty,  
-`0x4D`: color.empty,  
-`0x4E`: color.empty,  
-`0x4F`: color.RGBA { 0xBB, 0xBB, 0xBB, 0xFF} //0x4F: Grey 5  
-`0x50`: color.RGBA { 0xFF, 0xBB, 0xFF, 0xFF} //Fuchsia (0x50 - 0x58)  
-`0x51`: color.RGBA { 0xFF, 0x99, 0xFF, 0xFF}  
-`0x52`: color.RGBA { 0xDD, 0x22, 0xBB, 0xFF}  
-`0x53`: color.RGBA { 0xFF, 0x55, 0xEE, 0xFF}  
-`0x54`: color.RGBA { 0xFF, 0x00, 0xCC, 0xFF}  
-`0x55`: color.RGBA { 0x88, 0x55, 0x77, 0xFF}  
-`0x56`: color.RGBA { 0xBB, 0x00, 0x99, 0xFF}  
-`0x57`: color.RGBA { 0x88, 0x00, 0x66, 0xFF}  
-`0x58`: color.RGBA { 0x55, 0x00, 0x44, 0xFF}  
-`0x59`: color.empty,  
-`0x5A`: color.empty,  
-`0x5B`: color.empty,  
-`0x5C`: color.empty,  
-`0x5D`: color.empty,  
-`0x5E`: color.empty,  
-`0x5F`: color.RGBA { 0xAA, 0xAA, 0xAA, 0xFF} //0x5F: Grey 6  
-`0x60`: color.RGBA { 0xDD, 0xBB, 0x99, 0xFF} //Brown (0x60 - 0x68)  
-`0x61`: color.RGBA { 0xCC, 0xAA, 0x77, 0xFF}  
-`0x62`: color.RGBA { 0x77, 0x44, 0x33, 0xFF}  
-`0x63`: color.RGBA { 0xAA, 0x77, 0x44, 0xFF}  
-`0x64`: color.RGBA { 0x99, 0x32, 0x00, 0xFF}  
-`0x65`: color.RGBA { 0x77, 0x32, 0x22, 0xFF}  
-`0x66`: color.RGBA { 0x55, 0x22, 0x00, 0xFF}  
-`0x67`: color.RGBA { 0x33, 0x10, 0x00, 0xFF}  
-`0x68`: color.RGBA { 0x22, 0x10, 0x00, 0xFF}  
-`0x69`: color.empty,  
-`0x6A`: color.empty,  
-`0x6B`: color.empty,  
-`0x6C`: color.empty,  
-`0x6D`: color.empty,  
-`0x6E`: color.empty,  
-`0x6F`: color.RGBA { 0x99, 0x99, 0x99, 0xFF} //0x6F: Grey 7  
-`0x70`: color.RGBA { 0xFF, 0xFF, 0xCC, 0xFF} //Yellow (0x70 - 0x78)  
-`0x71`: color.RGBA { 0xFF, 0xFF, 0x77, 0xFF}  
-`0x72`: color.RGBA { 0xDD, 0xDD, 0x22, 0xFF}  
-`0x73`: color.RGBA { 0xFF, 0xFF, 0x00, 0xFF}  
-`0x74`: color.RGBA { 0xFF, 0xDD, 0x00, 0xFF}  
-`0x75`: color.RGBA { 0xCC, 0xAA, 0x00, 0xFF}  
-`0x76`: color.RGBA { 0x99, 0x99, 0x00, 0xFF}  
-`0x77`: color.RGBA { 0x88, 0x77, 0x00, 0xFF}  
-`0x78`: color.RGBA { 0x55, 0x55, 0x00, 0xFF}  
-`0x79`: color.empty,  
-`0x7A`: color.empty,  
-`0x7B`: color.empty,  
-`0x7C`: color.empty,  
-`0x7D`: color.empty,  
-`0x7E`: color.empty,  
-`0x7F`: color.RGBA { 0x88, 0x88, 0x88, 0xFF} //0x7F: Grey 8  
-`0x80`: color.RGBA { 0xDD, 0xBB, 0xFF, 0xFF} //Indigo (0x80 - 0x88)  
-`0x81`: color.RGBA { 0xBB, 0x99, 0xEE, 0xFF}  
-`0x82`: color.RGBA { 0x66, 0x32, 0xCC, 0xFF}  
-`0x83`: color.RGBA { 0x99, 0x55, 0xFF, 0xFF}  
-`0x84`: color.RGBA { 0x66, 0x00, 0xFF, 0xFF}  
-`0x85`: color.RGBA { 0x55, 0x44, 0x88, 0xFF}  
-`0x86`: color.RGBA { 0x44, 0x00, 0x99, 0xFF}  
-`0x87`: color.RGBA { 0x22, 0x00, 0x66, 0xFF}  
-`0x88`: color.RGBA { 0x22, 0x10, 0x33, 0xFF}  
-`0x89`: color.empty,  
-`0x8A`: color.empty,  
-`0x8B`: color.empty,  
-`0x8C`: color.empty,  
-`0x8D`: color.empty,  
-`0x8E`: color.empty,  
-`0x8F`: color.RGBA { 0x77, 0x77, 0x77, 0xFF} //0x8F: Grey 9  
-`0x90`: color.RGBA { 0xBB, 0xBB, 0xFF, 0xFF} //Blue (0x90 - 0x98)  
-`0x91`: color.RGBA { 0x88, 0x99, 0xFF, 0xFF}  
-`0x92`: color.RGBA { 0x33, 0x32, 0xAA, 0xFF}  
-`0x93`: color.RGBA { 0x33, 0x55, 0xEE, 0xFF}  
-`0x94`: color.RGBA { 0x00, 0x00, 0xFF, 0xFF}  
-`0x95`: color.RGBA { 0x33, 0x32, 0x88, 0xFF}  
-`0x96`: color.RGBA { 0x00, 0x00, 0xAA, 0xFF}  
-`0x97`: color.RGBA { 0x10, 0x10, 0x66, 0xFF}  
-`0x98`: color.RGBA { 0x00, 0x00, 0x22, 0xFF}  
-`0x99`: color.empty,  
-`0x9A`: color.empty,  
-`0x9B`: color.empty,  
-`0x9C`: color.empty,  
-`0x9D`: color.empty,  
-`0x9E`: color.empty,  
-`0x9F`: color.RGBA { 0x66, 0x66, 0x66, 0xFF} //0x9F: Grey 10  
-`0xA0`: color.RGBA { 0x99, 0xEE, 0xBB, 0xFF} //Dark Green (0xA0 - 0xA8)  
-`0xA1`: color.RGBA { 0x66, 0xCD, 0x77, 0xFF}  
-`0xA2`: color.RGBA { 0x22, 0x66, 0x10, 0xFF}  
-`0xA3`: color.RGBA { 0x44, 0xAA, 0x33, 0xFF}  
-`0xA4`: color.RGBA { 0x00, 0x88, 0x33, 0xFF}  
-`0xA5`: color.RGBA { 0x55, 0x77, 0x55, 0xFF}  
-`0xA6`: color.RGBA { 0x22, 0x55, 0x00, 0xFF}  
-`0xA7`: color.RGBA { 0x10, 0x32, 0x22, 0xFF}  
-`0xA8`: color.RGBA { 0x00, 0x22, 0x10, 0xFF}  
-`0xA9`: color.empty,  
-`0xAA`: color.empty,  
-`0xAB`: color.empty,  
-`0xAC`: color.empty,  
-`0xAD`: color.empty,  
-`0xAE`: color.empty,  
-`0xAF`: color.RGBA { 0x55, 0x55, 0x55, 0xFF} //0xAF: Grey 11  
-`0xB0`: color.RGBA { 0xDD, 0xFF, 0xBB, 0xFF} //Light Green (0xB0 - 0xB8)  
-`0xB1`: color.RGBA { 0xCC, 0xFF, 0x88, 0xFF}  
-`0xB2`: color.RGBA { 0x88, 0xAA, 0x55, 0xFF}  
-`0xB3`: color.RGBA { 0xAA, 0xDD, 0x88, 0xFF}  
-`0xB4`: color.RGBA { 0x88, 0xFF, 0x00, 0xFF}  
-`0xB5`: color.RGBA { 0xAA, 0xBB, 0x99, 0xFF}  
-`0xB6`: color.RGBA { 0x66, 0xBB, 0x00, 0xFF}  
-`0xB7`: color.RGBA { 0x55, 0x99, 0x00, 0xFF}  
-`0xB8`: color.RGBA { 0x33, 0x66, 0x00, 0xFF}  
-`0xB9`: color.empty,  
-`0xBA`: color.empty,  
-`0xBB`: color.empty,  
-`0xBC`: color.empty,  
-`0xBD`: color.empty,  
-`0xBE`: color.empty,  
-`0xBF`: color.RGBA { 0x44, 0x44, 0x44, 0xFF} //0xBF: Grey 12  
-`0xC0`: color.RGBA { 0xBB, 0xDD, 0xFF, 0xFF} //Slate Blue (0xC0 - 0xC8)  
-`0xC1`: color.RGBA { 0x77, 0xCD, 0xFF, 0xFF}  
-`0xC2`: color.RGBA { 0x33, 0x55, 0x99, 0xFF}  
-`0xC3`: color.RGBA { 0x66, 0x99, 0xFF, 0xFF}  
-`0xC4`: color.RGBA { 0x10, 0x77, 0xFF, 0xFF}  
-`0xC5`: color.RGBA { 0x44, 0x77, 0xAA, 0xFF}  
-`0xC6`: color.RGBA { 0x22, 0x44, 0x77, 0xFF}  
-`0xC7`: color.RGBA { 0x00, 0x22, 0x77, 0xFF}  
-`0xC8`: color.RGBA { 0x00, 0x10, 0x44, 0xFF}  
-`0xC9`: color.empty,  
-`0xCA`: color.empty,  
-`0xCB`: color.empty,  
-`0xCC`: color.empty,  
-`0xCD`: color.empty,  
-`0xCE`: color.empty,  
-`0xCF`: color.RGBA { 0x33, 0x32, 0x33, 0xFF} //0xCF: Grey 13  
-`0xD0`: color.RGBA { 0xAA, 0xFF, 0xFF, 0xFF} //Light Blue (0xD0 - 0xD8)  
-`0xD1`: color.RGBA { 0x55, 0xFF, 0xFF, 0xFF}  
-`0xD2`: color.RGBA { 0x00, 0x88, 0xBB, 0xFF}  
-`0xD3`: color.RGBA { 0x55, 0xBB, 0xCC, 0xFF}  
-`0xD4`: color.RGBA { 0x00, 0xCD, 0xFF, 0xFF}  
-`0xD5`: color.RGBA { 0x44, 0x99, 0xAA, 0xFF}  
-`0xD6`: color.RGBA { 0x00, 0x66, 0x88, 0xFF}  
-`0xD7`: color.RGBA { 0x00, 0x44, 0x55, 0xFF}  
-`0xD8`: color.RGBA { 0x00, 0x22, 0x33, 0xFF}  
-`0xD9`: color.empty,  
-`0xDA`: color.empty,  
-`0xDB`: color.empty,  
-`0xDC`: color.empty,  
-`0xDD`: color.empty,  
-`0xDE`: color.empty,  
-`0xDF`: color.RGBA { 0x22, 0x22, 0x22, 0xFF} //0xDF: Grey 14  
-`0xE0`: color.RGBA { 0xCC, 0xFF, 0xEE, 0xFF} //Ocean Blue (0xE0 - 0xE8)  
-`0xE1`: color.RGBA { 0xAA, 0xEE, 0xDD, 0xFF}  
-`0xE2`: color.RGBA { 0x33, 0xCD, 0xAA, 0xFF}  
-`0xE3`: color.RGBA { 0x55, 0xEE, 0xBB, 0xFF}  
-`0xE4`: color.RGBA { 0x00, 0xFF, 0xCC, 0xFF}  
-`0xE5`: color.RGBA { 0x77, 0xAA, 0xAA, 0xFF}  
-`0xE6`: color.RGBA { 0x00, 0xAA, 0x99, 0xFF}  
-`0xE7`: color.RGBA { 0x00, 0x88, 0x77, 0xFF}  
-`0xE8`: color.RGBA { 0x00, 0x44, 0x33, 0xFF}  
-`0xE9`: color.empty,  
-`0xEA`: color.empty,  
-`0xEB`: color.empty,  
-`0xEC`: color.empty,  
-`0xED`: color.empty,  
-`0xEE`: color.empty,  
-`0xEF`: color.RGBA { 0x00, 0x00, 0x00, 0xFF} //0xEF: Grey 15 (Black)  
-`0xF0`: color.RGBA { 0xAA, 0xFF, 0xAA, 0xFF} //Bright Green (0xF0 - 0xF8)  
-`0xF1`: color.RGBA { 0x77, 0xFF, 0x77, 0xFF}  
-`0xF2`: color.RGBA { 0x66, 0xDD, 0x44, 0xFF}  
-`0xF3`: color.RGBA { 0x00, 0xFF, 0x00, 0xFF}  
-`0xF4`: color.RGBA { 0x22, 0xDD, 0x22, 0xFF}  
-`0xF5`: color.RGBA { 0x55, 0xBB, 0x55, 0xFF}  
-`0xF6`: color.RGBA { 0x00, 0xBB, 0x00, 0xFF}  
-`0xF7`: color.RGBA { 0x00, 0x88, 0x00, 0xFF}  
-`0xF8`: color.RGBA { 0x22, 0x44, 0x22, 0xFF}  
-`0xF9`: color.empty,  
-`0xFA`: color.empty,  
-`0xFB`: color.empty,  
-`0xFC`: color.empty,  
-`0xFD`: color.empty,  
-`0xFE`: color.empty,  
-`0xFF`: color.empty  
-
-</details>
+|  Offset & Range  | Data Purpose                       | Data Type |
+|      :---:       | :---                               | :---      |
+| `0x0A5 -> 0x8A4` | pixel data - (2048 bytes long)     | UInt8     |
+| `0x8A5 -> 0x8A7` | trailing padding - (3 bytes long)  | Byte      |
 
 ### ACNH Design pattern Fix Conclusion:
 
@@ -435,6 +122,350 @@ PRO patterns follows a similar methodology, but with differing offsets. The abov
 You can refer to NHSE offsets in the source for more info.
 
 This was fun to find and fix and I hope it is an educational reference in the future.
+
+Due to the QR code import in ACNH that supports ACNL designs, interoperability is supported and fairly straight forward.  
+See below for more information:
+
+### ACNL Interoperability
+Due to the QR code import in ACNH that supports ACNL designs, interoperability is fairly straight forward.  
+The ACNL design pattern data format shares similarities with the ACNH format in that it contains name strings, ID bytes, hashes, pattern type bytes, a color palette and pixel data.
+
+To convert the data between, you simply need to adjust values as required and move the data to the correct offsets.  
+The structure is per below:
+
+### ACNL Pattern Data:
+|  Offset & Range  | Data Purpose                                                                | Data Type     |
+|      :---:       | :---                                                                        | :---          |
+| `0x000 -> 0x027` | pattern name (40 bytes long, 20 char name with separating `0x00`)           | ASCII/UTF-8   |
+| `0x028 -> 0x029` | padding (2 bytes long)                                                      | Byte          |
+| `0x02A -> 0x02B` | player ID (2 bytes long)                                                    | UInt16/UInt32 |
+| `0x02C -> 0x03D` | player name (18 bytes long, 9 char name with separating `0x00`)             | ASCII/UTF-8   |
+| `0x03E -> 0x03F` | padding (2 bytes long)                                                      | Byte          |
+| `0x040 -> 0x041` | town id (2 bytes long)                                                      | UInt16/UInt32 |
+| `0x042 -> 0x053` | town name (18 bytes long, 9 char name with separating `0x00`)               | ASCII/UTF-8   |
+| `0x054 -> 0x057` | unknown flag/hash? (4 bytes long, values seem random, change has no effect) | Byte          |
+| `0x058 -> 0x066` | palette data (15 bytes long, value is an index lookup, see below)           | Byte          |
+| `0x067 -> 0x067` | unknown flag? (1 byte long, value seems random, change has no effect)       | UInt8?        |
+| `0x068 -> 0x068` | ownership flag? (1 byte long, appears to be `0x00` or `0x0A` only)          | UInt8?        |
+| `0x069 -> 0x069` | pattern type (1 byte long, see below)                                       | Byte          |
+| `0x06A -> 0x06B` | unknown (2 bytes long, value seems random, change has no effect)            | Byte          |
+| `0x06C -> 0x26B` | pixel data main (512 bytes long, main pixels)                               | UInt8         |
+| `0x26C -> 0x46B` | pixel data expanded 1 (512 bytes long, extra pro pattern pixels)            | UInt8         |
+| `0x46C -> 0x66B` | pixel data expanded 2 (512 bytes long, extra pro pattern pixels)            | UInt8         |
+| `0x66C -> 0x86B` | pixel data expanded 3 (512 bytes long, extra pro pattern pixels)            | UInt8         |
+| `0x86C -> 0x86F` | trailing padding (4 bytes long, appears optional)                           | Byte          |
+
+For strings (names), either trim or expand them to match the format (ACNL -> ACNH expand, ACNH -> ACNL trim).  
+The same can be said for the ID bytes.
+
+Pattern types are cross supported (ACNH has pattern types for the ACNL patterns). Simply match up the type value correctly from each index.
+
+### ACNL Pattern Types Values:
+| Index Value | Type Indicator            | Data Type | ACNH Equiv. |
+|    :---:    | :---                      | :---      | :---        |
+| `0x00`      | Long Sleeve Dress         | Byte      | ✔️ `0x13`   |
+| `0x01`      | Short Sleeve Dress        | Byte      | ✔️ `0x12`   |
+| `0x02`      | Sleeveless Dress          | Byte      | ✔️ `0x14`   |
+| `0x03`      | Long Sleeve Shirt         | Byte      | ✔️ `0x16`   |
+| `0x04`      | Short Sleeve Shirt        | Byte      | ✔️ `0x15`   |
+| `0x05`      | Sleeveless Shirt          | Byte      | ✔️ `0x17`   |
+| `0x06`      | Horn Hat (Simple Pattern) | Byte      | ✔️ `0x19`   |
+| `0x07`      | Hat (Simple Pattern)      | Byte      | ✔️ `0x18`   |
+| `0x08`      | Standee                   | Byte      | ✔️ `0x1E`   |
+| `0x09`      | Easel (Simple Pattern)    | Byte      | ✔️ `0x00`   |
+
+The color palette for ACNL is comprised of 159 fixed colors with an index to be looked up, unlike ACNH which supports a wide selection of RGBA colors.  
+To convert from ACNH to ACNL format a closest matching color function needs to be run against the ACNH color to find the closest one in the ACNL index for each of the 15 colors. The color is then represented in the palette as that single index byte instead of the 3 bytes for RGB used by ACNH.  
+To convert in the other direction, a straight conversion can be made by taking the index and it's known color value and writing out the three values.
+
+
+### ACNL Color Palette Index:
+Colors are in blocks of 9 per group from `0x00` -> `0x08` of each offset, with 1/15 of the grey block at `0x0F` of each offset (except for 0xFF).
+From `0x09` -> `0x0E` of each offset is unused data.
+
+|   Index Value    | Color Value                          |                                                                                   | Color Block Name                     | Data Type |
+| :---             | :---                                 | :---                                                                              | :---                                 | :---      |
+| `0x00`           | color.RGBA { 0xFF, 0xEE, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFEEFF'/> | Pink Block: Color 1                  | Byte      |
+| `0x01`           | color.RGBA { 0xFF, 0x99, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF99AA'/> | Pink Block: Color 2                  | Byte      |
+| `0x02`           | color.RGBA { 0xEE, 0x55, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/EE5599'/> | Pink Block: Color 3                  | Byte      |
+| `0x03`           | color.RGBA { 0xFF, 0x66, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF66AA'/> | Pink Block: Color 4                  | Byte      |
+| `0x04`           | color.RGBA { 0xFF, 0x00, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF0066'/> | Pink Block: Color 5                  | Byte      |
+| `0x05`           | color.RGBA { 0xBB, 0x44, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB4477'/> | Pink Block: Color 6                  | Byte      |
+| `0x06`           | color.RGBA { 0xCC, 0x00, 0x55, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CC0055'/> | Pink Block: Color 7                  | Byte      |
+| `0x07`           | color.RGBA { 0x99, 0x00, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/990033'/> | Pink Block: Color 8                  | Byte      |
+| `0x08`           | color.RGBA { 0x55, 0x22, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/552233'/> | Pink Block: Color 9                  | Byte      |
+| `0x09` -> `0x0E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x0F`           | color.RGBA { 0xFF, 0xFF, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFFFFF'/> | Grey Block: Color 1 (White)          | Byte      |
+| `0x10`           | color.RGBA { 0xFF, 0xBB, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFBBCC'/> | Red Block: Color 1                   | Byte      |
+| `0x11`           | color.RGBA { 0xFF, 0x77, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF7777'/> | Red Block: Color 2                   | Byte      |
+| `0x12`           | color.RGBA { 0xDD, 0x32, 0x10, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DD3210'/> | Red Block: Color 3                   | Byte      |
+| `0x13`           | color.RGBA { 0xFF, 0x55, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF5544'/> | Red Block: Color 4                   | Byte      |
+| `0x14`           | color.RGBA { 0xFF, 0x00, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF0000'/> | Red Block: Color 5                   | Byte      |
+| `0x15`           | color.RGBA { 0xCC, 0x66, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CC6666'/> | Red Block: Color 6                   | Byte      |
+| `0x16`           | color.RGBA { 0xBB, 0x44, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB4444'/> | Red Block: Color 7                   | Byte      |
+| `0x17`           | color.RGBA { 0xBB, 0x00, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB0000'/> | Red Block: Color 8                   | Byte      |
+| `0x18`           | color.RGBA { 0x88, 0x22, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/882222'/> | Red Block: Color 9                   | Byte      |
+| `0x19` -> `0x1E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x1F`           | color.RGBA { 0xEE, 0xEE, 0xEE, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/EEEEEE'/> | Grey Block: Color 2                  | Byte      |
+| `0x20`           | color.RGBA { 0xDD, 0xCD, 0xBB, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDCDBB'/> | Orange Block: Color 1                | Byte      |
+| `0x21`           | color.RGBA { 0xFF, 0xCD, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFCD66'/> | Orange Block: Color 2                | Byte      |
+| `0x22`           | color.RGBA { 0xDD, 0x66, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DD6622'/> | Orange Block: Color 3                | Byte      |
+| `0x23`           | color.RGBA { 0xFF, 0xAA, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFAA22'/> | Orange Block: Color 4                | Byte      |
+| `0x24`           | color.RGBA { 0xFF, 0x66, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF6600'/> | Orange Block: Color 5                | Byte      |
+| `0x25`           | color.RGBA { 0xBB, 0x88, 0x55, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB8855'/> | Orange Block: Color 6                | Byte      |
+| `0x26`           | color.RGBA { 0xDD, 0x44, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DD4400'/> | Orange Block: Color 7                | Byte      |
+| `0x27`           | color.RGBA { 0xBB, 0x44, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB4400'/> | Orange Block: Color 8                | Byte      |
+| `0x28`           | color.RGBA { 0x66, 0x32, 0x10, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/663210'/> | Orange Block: Color 9                | Byte      |
+| `0x29` -> `0x2E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x2F`           | color.RGBA { 0xDD, 0xDD, 0xDD, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDDDDD'/> | Grey Block: Color 3                  | Byte      |
+| `0x30`           | color.RGBA { 0xFF, 0xEE, 0xDD, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFEEDD'/> | Peach Block: Color 1                 | Byte      |
+| `0x31`           | color.RGBA { 0xFF, 0xDD, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFDDCC'/> | Peach Block: Color 2                 | Byte      |
+| `0x32`           | color.RGBA { 0xFF, 0xCD, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFCDAA'/> | Peach Block: Color 3                 | Byte      |
+| `0x33`           | color.RGBA { 0xFF, 0xBB, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFBB88'/> | Peach Block: Color 4                 | Byte      |
+| `0x34`           | color.RGBA { 0xFF, 0xAA, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFAA88'/> | Peach Block: Color 5                 | Byte      |
+| `0x35`           | color.RGBA { 0xDD, 0x88, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DD8866'/> | Peach Block: Color 6                 | Byte      |
+| `0x36`           | color.RGBA { 0xBB, 0x66, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB6644'/> | Peach Block: Color 7                 | Byte      |
+| `0x37`           | color.RGBA { 0x99, 0x55, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/995533'/> | Peach Block: Color 8                 | Byte      |
+| `0x38`           | color.RGBA { 0x88, 0x44, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/884422'/> | Peach Block: Color 9                 | Byte      |
+| `0x39` -> `0x3E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x3F`           | color.RGBA { 0xCC, 0xCD, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CCCDCC'/> | Grey Block: Color 4                  | Byte      |
+| `0x40`           | color.RGBA { 0xFF, 0xCD, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFCDFF'/> | Purple Block: Color 1                | Byte      |
+| `0x41`           | color.RGBA { 0xEE, 0x88, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/EE88FF'/> | Purple Block: Color 2                | Byte      |
+| `0x42`           | color.RGBA { 0xCC, 0x66, 0xDD, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CC66DD'/> | Purple Block: Color 3                | Byte      |
+| `0x43`           | color.RGBA { 0xBB, 0x88, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB88CC'/> | Purple Block: Color 4                | Byte      |
+| `0x44`           | color.RGBA { 0xCC, 0x00, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CC00FF'/> | Purple Block: Color 5                | Byte      |
+| `0x45`           | color.RGBA { 0x99, 0x66, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/996699'/> | Purple Block: Color 6                | Byte      |
+| `0x46`           | color.RGBA { 0x88, 0x00, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/8800AA'/> | Purple Block: Color 7                | Byte      |
+| `0x47`           | color.RGBA { 0x55, 0x00, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/550077'/> | Purple Block: Color 8                | Byte      |
+| `0x48`           | color.RGBA { 0x33, 0x00, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/330044'/> | Purple Block: Color 9                | Byte      |
+| `0x49` -> `0x4E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x4F`           | color.RGBA { 0xBB, 0xBB, 0xBB, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BBBBBB'/> | Grey Block: Color 5                  | Byte      |
+| `0x50`           | color.RGBA { 0xFF, 0xBB, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFBBFF'/> | Fuchsia Block: Color 1               | Byte      |
+| `0x51`           | color.RGBA { 0xFF, 0x99, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF99FF'/> | Fuchsia Block: Color 2               | Byte      |
+| `0x52`           | color.RGBA { 0xDD, 0x22, 0xBB, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DD22BB'/> | Fuchsia Block: Color 3               | Byte      |
+| `0x53`           | color.RGBA { 0xFF, 0x55, 0xEE, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF55EE'/> | Fuchsia Block: Color 4               | Byte      |
+| `0x54`           | color.RGBA { 0xFF, 0x00, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FF00CC'/> | Fuchsia Block: Color 5               | Byte      |
+| `0x55`           | color.RGBA { 0x88, 0x55, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/885577'/> | Fuchsia Block: Color 6               | Byte      |
+| `0x56`           | color.RGBA { 0xBB, 0x00, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB0099'/> | Fuchsia Block: Color 7               | Byte      |
+| `0x57`           | color.RGBA { 0x88, 0x00, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/880066'/> | Fuchsia Block: Color 8               | Byte      |
+| `0x58`           | color.RGBA { 0x55, 0x00, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/550044'/> | Fuchsia Block: Color 9               | Byte      |
+| `0x59` -> `0x5E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x5F`           | color.RGBA { 0xAA, 0xAA, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AAAAAA'/> | Grey Block: Color 6                  | Byte      |
+| `0x60`           | color.RGBA { 0xDD, 0xBB, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDBB99'/> | Brown Block: Color 1                 | Byte      |
+| `0x61`           | color.RGBA { 0xCC, 0xAA, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CCAA77'/> | Brown Block: Color 2                 | Byte      |
+| `0x62`           | color.RGBA { 0x77, 0x44, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/774433'/> | Brown Block: Color 3                 | Byte      |
+| `0x63`           | color.RGBA { 0xAA, 0x77, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AA7744'/> | Brown Block: Color 4                 | Byte      |
+| `0x64`           | color.RGBA { 0x99, 0x32, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/993200'/> | Brown Block: Color 5                 | Byte      |
+| `0x65`           | color.RGBA { 0x77, 0x32, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/773222'/> | Brown Block: Color 6                 | Byte      |
+| `0x66`           | color.RGBA { 0x55, 0x22, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/552200'/> | Brown Block: Color 7                 | Byte      |
+| `0x67`           | color.RGBA { 0x33, 0x10, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/331000'/> | Brown Block: Color 8                 | Byte      |
+| `0x68`           | color.RGBA { 0x22, 0x10, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/221000'/> | Brown Block: Color 9                 | Byte      |
+| `0x69` -> `0x6E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x6F`           | color.RGBA { 0x99, 0x99, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/999999'/> | Grey Block: Color 7                  | Byte      |
+| `0x70`           | color.RGBA { 0xFF, 0xFF, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFFFCC'/> | Yellow Block: Color 1                | Byte      |
+| `0x71`           | color.RGBA { 0xFF, 0xFF, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFFF77'/> | Yellow Block: Color 2                | Byte      |
+| `0x72`           | color.RGBA { 0xDD, 0xDD, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDDD22'/> | Yellow Block: Color 3                | Byte      |
+| `0x73`           | color.RGBA { 0xFF, 0xFF, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFFF00'/> | Yellow Block: Color 4                | Byte      |
+| `0x74`           | color.RGBA { 0xFF, 0xDD, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFDD00'/> | Yellow Block: Color 5                | Byte      |
+| `0x75`           | color.RGBA { 0xCC, 0xAA, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CCAA00'/> | Yellow Block: Color 6                | Byte      |
+| `0x76`           | color.RGBA { 0x99, 0x99, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/999900'/> | Yellow Block: Color 7                | Byte      |
+| `0x77`           | color.RGBA { 0x88, 0x77, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/887700'/> | Yellow Block: Color 8                | Byte      |
+| `0x78`           | color.RGBA { 0x55, 0x55, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/555500'/> | Yellow Block: Color 9                | Byte      |
+| `0x79` -> `0x7E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x7F`           | color.RGBA { 0x88, 0x88, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/888888'/> | Grey Block: Color 8                  | Byte      |
+| `0x80`           | color.RGBA { 0xDD, 0xBB, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDBBFF'/> | Indigo Block: Color 1                | Byte      |
+| `0x81`           | color.RGBA { 0xBB, 0x99, 0xEE, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BB99EE'/> | Indigo Block: Color 2                | Byte      |
+| `0x82`           | color.RGBA { 0x66, 0x32, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/6632CC'/> | Indigo Block: Color 3                | Byte      |
+| `0x83`           | color.RGBA { 0x99, 0x55, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/9955FF'/> | Indigo Block: Color 4                | Byte      |
+| `0x84`           | color.RGBA { 0x66, 0x00, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/6600FF'/> | Indigo Block: Color 5                | Byte      |
+| `0x85`           | color.RGBA { 0x55, 0x44, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/554488'/> | Indigo Block: Color 6                | Byte      |
+| `0x86`           | color.RGBA { 0x44, 0x00, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/440099'/> | Indigo Block: Color 7                | Byte      |
+| `0x87`           | color.RGBA { 0x22, 0x00, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/220066'/> | Indigo Block: Color 8                | Byte      |
+| `0x88`           | color.RGBA { 0x22, 0x10, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/221033'/> | Indigo Block: Color 9                | Byte      |
+| `0x89` -> `0x8E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x8F`           | color.RGBA { 0x77, 0x77, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/777777'/> | Grey Block: Color 9                  | Byte      |
+| `0x90`           | color.RGBA { 0xBB, 0xBB, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BBBBFF'/> | Blue Block: Color 1                  | Byte      |
+| `0x91`           | color.RGBA { 0x88, 0x99, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/8899FF'/> | Blue Block: Color 2                  | Byte      |
+| `0x92`           | color.RGBA { 0x33, 0x32, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/3332AA'/> | Blue Block: Color 3                  | Byte      |
+| `0x93`           | color.RGBA { 0x33, 0x55, 0xEE, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/3355EE'/> | Blue Block: Color 4                  | Byte      |
+| `0x94`           | color.RGBA { 0x00, 0x00, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/0000FF'/> | Blue Block: Color 5                  | Byte      |
+| `0x95`           | color.RGBA { 0x33, 0x32, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/333288'/> | Blue Block: Color 6                  | Byte      |
+| `0x96`           | color.RGBA { 0x00, 0x00, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/0000AA'/> | Blue Block: Color 7                  | Byte      |
+| `0x97`           | color.RGBA { 0x10, 0x10, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/101066'/> | Blue Block: Color 8                  | Byte      |
+| `0x98`           | color.RGBA { 0x00, 0x00, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/000022'/> | Blue Block: Color 9                  | Byte      |
+| `0x99` -> `0x9E` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0x9F`           | color.RGBA { 0x66, 0x66, 0x66, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/666666'/> | Grey Block: Color 10                 | Byte      |
+| `0xA0`           | color.RGBA { 0x99, 0xEE, 0xBB, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/99EEBB'/> | Dark Green Block: Color 1            | Byte      |
+| `0xA1`           | color.RGBA { 0x66, 0xCD, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/66CD77'/> | Dark Green Block: Color 2            | Byte      |
+| `0xA2`           | color.RGBA { 0x22, 0x66, 0x10, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/226610'/> | Dark Green Block: Color 3            | Byte      |
+| `0xA3`           | color.RGBA { 0x44, 0xAA, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/44AA33'/> | Dark Green Block: Color 4            | Byte      |
+| `0xA4`           | color.RGBA { 0x00, 0x88, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/008833'/> | Dark Green Block: Color 5            | Byte      |
+| `0xA5`           | color.RGBA { 0x55, 0x77, 0x55, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/557755'/> | Dark Green Block: Color 6            | Byte      |
+| `0xA6`           | color.RGBA { 0x22, 0x55, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/225500'/> | Dark Green Block: Color 7            | Byte      |
+| `0xA7`           | color.RGBA { 0x10, 0x32, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/103222'/> | Dark Green Block: Color 8            | Byte      |
+| `0xA8`           | color.RGBA { 0x00, 0x22, 0x10, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/002210'/> | Dark Green Block: Color 9            | Byte      |
+| `0xA9` -> `0xAE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0xAF`           | color.RGBA { 0x55, 0x55, 0x55, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/555555'/> | Grey Block: Color 11                 | Byte      |
+| `0xB0`           | color.RGBA { 0xDD, 0xFF, 0xBB, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDFFBB'/> | Light Green Block: Color 1           | Byte      |
+| `0xB1`           | color.RGBA { 0xCC, 0xFF, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CCFF88'/> | Light Green Block: Color 2           | Byte      |
+| `0xB2`           | color.RGBA { 0x88, 0xAA, 0x55, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/88AA55'/> | Light Green Block: Color 3           | Byte      |
+| `0xB3`           | color.RGBA { 0xAA, 0xDD, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AADD88'/> | Light Green Block: Color 4           | Byte      |
+| `0xB4`           | color.RGBA { 0x88, 0xFF, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/88FF00'/> | Light Green Block: Color 5           | Byte      |
+| `0xB5`           | color.RGBA { 0xAA, 0xBB, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AABB99'/> | Light Green Block: Color 6           | Byte      |
+| `0xB6`           | color.RGBA { 0x66, 0xBB, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/66BB00'/> | Light Green Block: Color 7           | Byte      |
+| `0xB7`           | color.RGBA { 0x55, 0x99, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/559900'/> | Light Green Block: Color 8           | Byte      |
+| `0xB8`           | color.RGBA { 0x33, 0x66, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/336600'/> | Light Green Block: Color 9           | Byte      |
+| `0xB9` -> `0xBE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0xBF`           | color.RGBA { 0x44, 0x44, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/444444'/> | Grey Block: Color 12                 | Byte      |
+| `0xC0`           | color.RGBA { 0xBB, 0xDD, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BBDDFF'/> | Slate Blue Block: Color 1            | Byte      |
+| `0xC1`           | color.RGBA { 0x77, 0xCD, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/77CDFF'/> | Slate Blue Block: Color 2            | Byte      |
+| `0xC2`           | color.RGBA { 0x33, 0x55, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/335599'/> | Slate Blue Block: Color 3            | Byte      |
+| `0xC3`           | color.RGBA { 0x66, 0x99, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/6699FF'/> | Slate Blue Block: Color 4            | Byte      |
+| `0xC4`           | color.RGBA { 0x10, 0x77, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/1077FF'/> | Slate Blue Block: Color 5            | Byte      |
+| `0xC5`           | color.RGBA { 0x44, 0x77, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/4477AA'/> | Slate Blue Block: Color 6            | Byte      |
+| `0xC6`           | color.RGBA { 0x22, 0x44, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/224477'/> | Slate Blue Block: Color 7            | Byte      |
+| `0xC7`           | color.RGBA { 0x00, 0x22, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/002277'/> | Slate Blue Block: Color 8            | Byte      |
+| `0xC8`           | color.RGBA { 0x00, 0x10, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/001044'/> | Slate Blue Block: Color 9            | Byte      |
+| `0xC9` -> `0xCE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0xCF`           | color.RGBA { 0x33, 0x32, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/333233'/> | Grey Block: Color 13                 | Byte      |
+| `0xD0`           | color.RGBA { 0xAA, 0xFF, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AAFFFF'/> | Light Blue Block: Color 1            | Byte      |
+| `0xD1`           | color.RGBA { 0x55, 0xFF, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/55FFFF'/> | Light Blue Block: Color 2            | Byte      |
+| `0xD2`           | color.RGBA { 0x00, 0x88, 0xBB, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/0088BB'/> | Light Blue Block: Color 3            | Byte      |
+| `0xD3`           | color.RGBA { 0x55, 0xBB, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/55BBCC'/> | Light Blue Block: Color 4            | Byte      |
+| `0xD4`           | color.RGBA { 0x00, 0xCD, 0xFF, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/00CDFF'/> | Light Blue Block: Color 5            | Byte      |
+| `0xD5`           | color.RGBA { 0x44, 0x99, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/4499AA'/> | Light Blue Block: Color 6            | Byte      |
+| `0xD6`           | color.RGBA { 0x00, 0x66, 0x88, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/006688'/> | Light Blue Block: Color 7            | Byte      |
+| `0xD7`           | color.RGBA { 0x00, 0x44, 0x55, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/004455'/> | Light Blue Block: Color 8            | Byte      |
+| `0xD8`           | color.RGBA { 0x00, 0x22, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/002233'/> | Light Blue Block: Color 9            | Byte      |
+| `0xD9` -> `0xDE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0xDF`           | color.RGBA { 0x22, 0x22, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/222222'/> | Grey Block: Color 14                 | Byte      |
+| `0xE0`           | color.RGBA { 0xCC, 0xFF, 0xEE, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CCFFEE'/> | Ocean Blue Block: Color 1            | Byte      |
+| `0xE1`           | color.RGBA { 0xAA, 0xEE, 0xDD, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AAEEDD'/> | Ocean Blue Block: Color 2            | Byte      |
+| `0xE2`           | color.RGBA { 0x33, 0xCD, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/33CDAA'/> | Ocean Blue Block: Color 3            | Byte      |
+| `0xE3`           | color.RGBA { 0x55, 0xEE, 0xBB, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/55EEBB'/> | Ocean Blue Block: Color 4            | Byte      |
+| `0xE4`           | color.RGBA { 0x00, 0xFF, 0xCC, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/00FFCC'/> | Ocean Blue Block: Color 5            | Byte      |
+| `0xE5`           | color.RGBA { 0x77, 0xAA, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/77AAAA'/> | Ocean Blue Block: Color 6            | Byte      |
+| `0xE6`           | color.RGBA { 0x00, 0xAA, 0x99, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/00AA99'/> | Ocean Blue Block: Color 7            | Byte      |
+| `0xE7`           | color.RGBA { 0x00, 0x88, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/008877'/> | Ocean Blue Block: Color 8            | Byte      |
+| `0xE8`           | color.RGBA { 0x00, 0x44, 0x33, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/004433'/> | Ocean Blue Block: Color 9            | Byte      |
+| `0xE9` -> `0xEE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0xEF`           | color.RGBA { 0x00, 0x00, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/000000'/> | Grey Block: Color 15 (Black)         | Byte      | 
+| `0xF0`           | color.RGBA { 0xAA, 0xFF, 0xAA, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AAFFAA'/> | Bright Green Block: Color 1          | Byte      |
+| `0xF1`           | color.RGBA { 0x77, 0xFF, 0x77, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/77FF77'/> | Bright Green Block: Color 2          | Byte      |
+| `0xF2`           | color.RGBA { 0x66, 0xDD, 0x44, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/66DD44'/> | Bright Green Block: Color 3          | Byte      |
+| `0xF3`           | color.RGBA { 0x00, 0xFF, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/00FF00'/> | Bright Green Block: Color 4          | Byte      |
+| `0xF4`           | color.RGBA { 0x22, 0xDD, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/22DD22'/> | Bright Green Block: Color 5          | Byte      |
+| `0xF5`           | color.RGBA { 0x55, 0xBB, 0x55, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/55BB55'/> | Bright Green Block: Color 6          | Byte      |
+| `0xF6`           | color.RGBA { 0x00, 0xBB, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/00BB00'/> | Bright Green Block: Color 7          | Byte      |
+| `0xF7`           | color.RGBA { 0x00, 0x88, 0x00, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/008800'/> | Bright Green Block: Color 8          | Byte      |
+| `0xF8`           | color.RGBA { 0x22, 0x44, 0x22, 0xFF} | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/224422'/> | Bright Green Block: Color 9          | Byte      |
+| `0xF9` -> `0xFE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
+| `0xFF`           | Unused                               | ❌                                                                                | Displays white, but crashes on edit. | Unused    |
+
+### Pattern Conversion Pseudocode:
+An example for converting from an ACNH to an ACNL format in C# style pseudocode is as follows:
+
+```csharp
+public void ConvertACPattern()
+{
+    byte[] ACNHpattern = File.ReadAllBytes(ACNH_Pattern_Example.nhd); // Read your pattern
+    
+    byte[] ACNLpattern = new byte[0x26C]; // Create new bytes for ACNL
+    
+    switch(ACNHpattern[0x77]) // Check Pattern Type
+    {
+        case 0x00:
+          ACNLpattern[0x69] = 0x09;
+          break;
+        case 0x12:
+          ACNLpattern[0x69] = 0x01;
+          break;
+        case 0x13:
+          ACNLpattern[0x69] = 0x00;
+          break;
+        case 0x14:
+          ACNLpattern[0x69] = 0x02;
+          break;
+        case 0x15:
+          ACNLpattern[0x69] = 0x04;
+          break;
+        case 0x16:
+          ACNLpattern[0x69] = 0x03;
+          break;
+        case 0x17:
+          ACNLpattern[0x69] = 0x05;
+          break;
+        case 0x18:
+          ACNLpattern[0x69] = 0x07;
+          break;
+        case 0x19:
+          ACNLpattern[0x69] = 0x06;
+          break;    
+        case 0x1E:
+          ACNLpattern[0x69] = 0x08;
+          break;  
+        default:
+          // Not a default interoperable type
+          return;
+          break;
+    }
+    
+    Array.Copy(ACNHpattern, 0x10, ACNLpattern, 0x00, 40); // Pattern Name
+    Array.Copy(ACNHpattern, 0x58, ACNLpattern, 0x2C, 18); // Player Name (Trimmed)
+    Array.Copy(ACNHpattern, 0x3C, ACNLpattern, 0x42, 18); // Island Name (Trimmed)
+    
+    Array.Copy(patternDat, 0x54, ACNLbin, 0x2A, 2); // Player ID Hash
+    Array.Copy(patternDat, 0x38, ACNLbin, 0x40, 2); // Town ID Hash
+    
+    byte[] ACNHpalette = new byte[45]; // Create bytes to store ACNH palette
+    Array.Copy(ACNHpattern, 0x78, ACNHpalette, 0, 45); // Store them
+    
+    byte[] ACNLpalette = new byte[15]; // Create bytes to store ACNL palette
+    for (int i = 0; i < ACNLpalette.Length; i++)
+    {
+        ACNLpalette[i] = GetNearestColor(ACNHpalette[i*3], ACNHpalette[i*3 + 1], ACNHpalette[i*3 + 2]);
+    }
+    Array.Copy(ACNLpalette, 0x00, ACNLpattern, 0x58, 15);  // Store them
+    
+    Array.Copy(ACNHpattern, 0xA5, ACNLpattern, 0x6C, 512); // PixelData
+}
+
+public byte GetNearestColor(byte R, byte G, byte B)
+{
+    var convVal = -1;
+    var convIndex = -1;
+
+    for (int i = 0; i < 256; i++) // Run against the color index
+    {
+        if (ACNLColors[i] != Color.Empty) // Check we don't pick one of the unused colors
+        {
+            // Get differences in color value
+            var diff = Math.Abs(ACNLColors[i].R - R) + Math.Abs(ACNLColors[i].G - G) + Math.Abs(ACNLColors[i].B - B);
+
+            if (convVal == -1 || convVal > diff) // If close enough, pick it
+            {
+                convVal = diff;
+                convIndex = i;
+            }
+        }
+    }
+
+    return (byte)convIndex;
+}
+
+public Color[] ACNLColors = new Color[256]
+{
+    Color.FromArgb ( 0xFF, 0xEE, 0xFF ), // 0x00, refer color table in info above
+    // ...and on and on...
+    Color.Empty, // 0xFF, refer color table in info above
+};
+
+```
+
+
+### QR Code Data Information:
+
+
 
 <!-- BUY ME A COFFEE -->
 ## Help Support More Like This
