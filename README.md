@@ -3,10 +3,9 @@ Research on Animal Crossing: New Horizons design pattern data for fixing some sa
 ~~This is in reference to fork: https://github.com/lottehime/NHSE~~  
 Results were submitted to NHSE master and merged! 🥳
 
+## ⚠️WIP, currently adding info and formatting better!⚠️
 
 ### What is it?
-⚠️WIP, currently adding info and formatting better!⚠️
-
 I noticed when using NHSE and different design editors that under certain conditions, importing pattern files (`*.nhd` or `*.acnh`) did not seem to set the patterns as owned by the player and thus they were not editable in-game, much like if they were QR codes or from the pattern exchange.
 
 I also noticed that for some pattern slots, the previous pattern name would remain in place of the imported one.
