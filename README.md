@@ -4,9 +4,11 @@ Research on Animal Crossing: New Horizons design pattern data.
 I noticed when using NHSE and different design editors that under certain conditions, importing pattern files (`*.nhd` or `*.acnh`) did not seem to set the patterns as owned by the player and thus they were not editable in-game, much like if they were QR codes or from the pattern exchange.  
 I also noticed that for some pattern slots, the previous pattern name would remain in place of the imported one and both issues bugged me.
 
-So, I forked NHSE, grabbed some dumped patterns and dat files then spent some time and hacked together a fix and added it to my fork, which was successfully merged into the main repo (yay!🥳)... and I will continue to submit finds and fun features to NHSE as it is the best thing out there for ACNH! 🏝️🤓
+So, I forked NHSE, grabbed some dumped patterns and dat files then spent some time and hacked together a fix and added it to my fork, which was successfully merged into the main repo (yay!🥳)... and I will continue to submit finds and fun features to NHSE as it is the best thing out there for goofing with ACNH! 🏝️🤓
 
+Some details are common enough knowledge that they are incorporated into code bases, some isn't (such as the fix), but there doesn't seem to be a consolidated spot for the information.  
 As a result of looking into it, I was also motivated to document the details and to create some tools to rip, host, convert and catalog design pattern files.
+
 
 You can find technical detail in the below writeup and/or check out my [ACNH Pattern Dump Index](https://github.com/lottehime/ACNH-Pattern-Dump-Index) repo (WIP!👷).
 
