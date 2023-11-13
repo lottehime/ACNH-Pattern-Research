@@ -477,7 +477,7 @@ The output should be something like this:
 <img src="images/Audie_Normal.png"></img>
 
 #### QR Code:
-<img src="images/Audie_Normal.QR.png"></img>
+<img src="images/Audie_Normal.QR.png" width="350" height="350"></img>
 
 
 For PRO design patterns, the data needs to be split into 4 parts (540 bytes each) from `0x00`. This is used to generate 4 QR Codes using the structural append feature in QR Code.  
@@ -493,7 +493,7 @@ The output should be something like this:
 <img src="images/Audie_Pro.png"></img>
 
 #### QR Code:
-<img src="images/Audie_Pro.QR.png"></img>
+<img src="images/Audie_Pro.QR.png" width="350" height="350"></img>
 
 
 
