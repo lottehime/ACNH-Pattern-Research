@@ -3,9 +3,10 @@ Research on Animal Crossing: New Horizons design pattern data for fixing some sa
 ~~This is in reference to fork: https://github.com/lottehime/NHSE~~  
 Results were submitted to NHSE master and merged! 🥳
 
-## ⚠️WIP, currently adding info and formatting better!⚠️
 
 ### What is it?
+⚠️WIP, currently adding info and formatting better!⚠️
+
 I noticed when using NHSE and different design editors that under certain conditions, importing pattern files (`*.nhd` or `*.acnh`) did not seem to set the patterns as owned by the player and thus they were not editable in-game, much like if they were QR codes or from the pattern exchange.
 
 I also noticed that for some pattern slots, the previous pattern name would remain in place of the imported one.
@@ -463,6 +464,26 @@ public Color[] ACNLColors = new Color[256]
 
 
 ### QR Code Data Information:
+For generation of QR Codes, the design pattern needs to be converted into ACNL format. 
+
+For normal design patterns, the QR Code data needs to be encoded in raw bytes (620 bytes) and generated at a size of `700x700` with error correction level M (~15%).  
+Whatever library or code you are using for the QR Code generation should allow you to pass these options.  
+The data should be read from bytes into a (byte)bitmap and if an encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
+The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Code can then be generated.
+
+The output should be something like this:
+[tbc]
+
+
+For PRO design patterns, the data needs to be split into 4 parts (540 bytes each) from `0x00`. This is used to generate 4 QR Codes using the structural append feature in QR Code.  
+Each QR Code needs to be a size of `400x400` and each one will require a sequence number, total number of symbols and parity value passed to it.  
+The parity value can be randomly generated and should be between 0 to 255.  
+Error correction level M (~15%) is required as above and each of the data parts should be read from bytes into a (byte)bitmap and if an encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
+The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Code can then be generated.
+The 4 QR Codes can then optionally be stitched into an 800x800 canvas to keep them stored together (like: `0,0; 0,1; 1,0; 1,1`).
+
+The output should be something like this:
+[tbc]
 
 
 
