@@ -474,7 +474,7 @@ The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Cod
 The output should be something like this:
 #### Normal/Simple Pattern
 #### Image:
-<img src="images/Audie_Normal.png"></img>
+<img src="images/Audie_Normal.png" width="64" height="64"></img>
 
 #### QR Code:
 <img src="images/Audie_Normal.QR.png" width="350" height="350"></img>
@@ -490,7 +490,7 @@ The 4 QR Codes can then optionally be stitched into an `800x800` canvas to keep 
 The output should be something like this:
 #### Short Sleeve Dress (3DS)
 #### Image:
-<img src="images/Audie_Pro.png"></img>
+<img src="images/Audie_Pro.png" width="128" height="128"></img>
 
 #### QR Code:
 <img src="images/Audie_Pro.QR.png" width="400" height="400"></img>
