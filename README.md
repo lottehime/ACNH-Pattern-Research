@@ -90,7 +90,7 @@ If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and in
 When you mix the pattern being updated with the players IDs correctly, and the IsEdited flags flipped to edited you get a correctly named and editable pattern imported into your save. Yay!
 
 PRO patterns follows a similar methodology, but with differing offsets. The above concept applied to them also works.  
-You can refer to NHSE offsets in the source for more info.
+You can refer to the below for more info.
 
 This was fun to find and fix and I hope it is an educational reference in the future.
 
