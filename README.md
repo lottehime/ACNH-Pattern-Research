@@ -472,7 +472,12 @@ The data should be read from bytes into a (byte)bitmap and if an encoding to a s
 The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Code can then be generated.
 
 The output should be something like this:
-[tbc]
+#### Normal/Simple Pattern
+#### Image:
+<img src="images/Audie_Normal.png"></img>
+
+#### QR Code:
+<img src="images/Audie_Normal.QR.png"></img>
 
 
 For PRO design patterns, the data needs to be split into 4 parts (540 bytes each) from `0x00`. This is used to generate 4 QR Codes using the structural append feature in QR Code.  
@@ -483,7 +488,12 @@ The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Cod
 The 4 QR Codes can then optionally be stitched into an `800x800` canvas to keep them stored together (like: `0,0; 0,1; 1,0; 1,1`).
 
 The output should be something like this:
-[tbc]
+#### Short Sleeve Dress (3DS)
+#### Image:
+<img src="images/Audie_Pro.png"></img>
+
+#### QR Code:
+<img src="images/Audie_Pro.QR.png"></img>
 
 
 
