@@ -480,7 +480,7 @@ Each QR Code needs to be a size of `400x400` and each one will require a sequenc
 The parity value can be randomly generated and should be between 0 to 255.  
 Error correction level M (~15%) is required as above and each of the data parts should be read from bytes into a (byte)bitmap and if an encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
 The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Code can then be generated.
-The 4 QR Codes can then optionally be stitched into an 800x800 canvas to keep them stored together (like: `0,0; 0,1; 1,0; 1,1`).
+The 4 QR Codes can then optionally be stitched into an `800x800` canvas to keep them stored together (like: `0,0; 0,1; 1,0; 1,1`).
 
 The output should be something like this:
 [tbc]
