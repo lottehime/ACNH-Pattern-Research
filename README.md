@@ -1,26 +1,60 @@
 # ACNH-Pattern-Research
-Research on Animal Crossing: New Horizons design pattern data for fixing some save editor bugs.  
-~~This is in reference to fork: https://github.com/lottehime/NHSE~~  
-Results were submitted to NHSE master and merged! 🥳
+Research on Animal Crossing: New Horizons design pattern data.
+
+I noticed when using NHSE and different design editors that under certain conditions, importing pattern files (`*.nhd` or `*.acnh`) did not seem to set the patterns as owned by the player and thus they were not editable in-game, much like if they were QR codes or from the pattern exchange.  
+
+I also noticed that for some pattern slots, the previous pattern name would remain in place of the imported one and it bugged me.
+
+So, I forked NHSE, grabbed some dumped patterns and dat files then spent some time and hacked together a fix and added it to my fork, which was successfully merged into the main repo (yay!🥳)... and I will continue to submit finds and fun features to NHSE as it is the best thing out there for ACNH! 🏝️🤓
+
+As a result of looking into it, I was also motivated to document the details and to create some tools to rip, host, convert and catalog design pattern files.
+
+You can find technical detail in the below writeup and/or check out my [ACNH Pattern Dump Index](https://github.com/lottehime/ACNH-Pattern-Dump-Index) repo (WIP!👷).
+
+---
+
+<!-- BUY ME A COFFEE -->
+### Help Support More Like This
+
+If any of this has been helpful, please consider caffeinating me further ☕  
+Thanks!
+
+<a href="https://www.buymeacoffee.com/lottehime" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+
+---
+
+# Research
+
+### Table of Contents:
+<!-- TABLE OF CONTENTS -->
+<ol>
+    <li><a href="#acnh-general-design-pattern-info">ACNH General Design Pattern Info</a></li>
+    <ul>
+    	<li><a href="#acnh-design-pattern-fix-conclusion">ACNH Design Pattern Fix Conclusion</a></li>
+	</ul>
+    <li><a href="#acnh-design-pattern-data">ACNH Design Pattern Data</a></li>
+    <ul>
+    	<li><a href="#acnh-pro-design-pattern-exception">ACNH PRO Design Pattern Exception</a></li>
+    	<li><a href="#acnh-pattern-type-values">ACNH Pattern Type Values</a></li>
+	</ul>
+    <li><a href="#acnl-interoperability">ACNL Interoperability</a></li>
+    <ul>
+    	<li><a href="#acnl-pattern-data">ACNL Pattern Data</a></li>
+    	<li><a href="#acnl-pattern-types-values">ACNL Pattern Types Values</a></li>
+    	<li><a href="#acnl-color-palette-index">ACNL Color Palette Index</a></li>
+    	<li><a href="#acnl-palette-common-representation">ACNL Palette Common Representation</a></li>
+    	<li><a href="#acnl-pattern-conversion-pseudocode">ACNL Pattern Conversion Pseudocode</a></li>
+	</ul>
+    <li><a href="#qr-code-data-information">QR Code Data Information</a></li>
+    <ul>
+    	<li><a href="#normal-design-pattern-qr-codes">Normal Design Pattern QR Codes</a></li>
+    	<li><a href="#pro-design-pattern-qr-codes">PRO Design Pattern QR Codes</a></li>
+	</ul>
+</ol>
 
 
-### What is it?
-⚠️WIP, currently adding info and formatting better!⚠️
+## ACNH General Design Pattern Info
 
-I noticed when using NHSE and different design editors that under certain conditions, importing pattern files (`*.nhd` or `*.acnh`) did not seem to set the patterns as owned by the player and thus they were not editable in-game, much like if they were QR codes or from the pattern exchange.
-
-I also noticed that for some pattern slots, the previous pattern name would remain in place of the imported one.
-
-It bugged me.
-
-So, I hacked together a fix and added it to a fork of NHSE which [you can find here](https://github.com/lottehime/NHSE) (source only).  
-Current builds of [NHSE from the main website](https://berichan.github.io/GetNHSE/) now have this research implemented!  
-Builds removed from this repo now. 👍  
-~~I also added a build to this repo while waiting for the pull request to resolve, so that you (and I) can use it without waiting.~~  
-
-
-
-## Research
 Design pattern data is found in `main.dat` within the save, as are flags for if the player has edited the pattern slot.  
 An ID for the player and the town/island reside in `personal.dat` within the save.
 
@@ -47,9 +81,23 @@ Complete untrimmed pattern data is 680 bytes long, starting with a 16 byte hash 
 This format matches what you will find in `*.acnh` files from https://acpatterns.com/ and `*.nhd` files from NHSE, files from other editors may be trimmed.  
 We can use a `*.nhd` file to isolate the data we are interested in.
 
-The structure of the pattern file is roughly as follows:  
 
-### ACNH Design Pattern Data:
+### ACNH Design Pattern Fix Conclusion
+
+If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and inject it at offsets `0x54` and `0x38` respectively, then write these back to their correct location in `main.dat` (main pattern offset + index) we end up with a pattern written with the image we wanted, and the correct player and town IDs. Then we can overwrite the data at `0x70` with `0x00, 0x00, 0x00, 0x00`. This allows the user to own/edit them in-game.
+
+When you mix the pattern being updated with the players IDs correctly, and the IsEdited flags flipped to edited you get a correctly named and editable pattern imported into your save. Yay!
+
+PRO patterns follows a similar methodology, but with differing offsets. The above concept applied to them also works.  
+You can refer to NHSE offsets in the source for more info.
+
+This was fun to find and fix and I hope it is an educational reference in the future.
+
+The structure of the design pattern file/data is explained below: 
+
+
+### ACNH Design Pattern Data
+
 |  Offset & Range  | Data Purpose                                                         | Data Type     |
 |      :---:       | :---                                                                 | :---          |
 | `0x000 -> 0x00F` | pattern hash - (16 bytes long)                                       | UInt16/UInt32 |
@@ -67,7 +115,20 @@ The structure of the pattern file is roughly as follows:
 | `0x0A5 -> 0x2A4` | pixel data - (512 bytes long, pro designs except this, see below)    | UInt8         |
 | `0x2A5 -> 0x2A7` | trailing padding - (3 bytes long)                                    | Byte          |
 
-### Pattern Type Values:
+
+### ACNH PRO Design Pattern Exception
+
+For PRO Design Patterns, the pixel data is longer and is followed by the same termination padding.  
+See below:  
+
+|  Offset & Range  | Data Purpose                       | Data Type |
+|      :---:       | :---                               | :---      |
+| `0x0A5 -> 0x8A4` | pixel data - (2048 bytes long)     | UInt8     |
+| `0x8A5 -> 0x8A7` | trailing padding - (3 bytes long)  | Byte      |
+
+
+### ACNH Pattern Type Values
+
 | Index Value | Type Indicator                         | Data Type | ACNL Equiv.      |
 |    :---:    | :---                                   | :---      | :---             |
 | `0x00`      | Simple Pattern                         | Byte      | ✔️ `0x09`        |
@@ -103,37 +164,21 @@ The structure of the pattern file is roughly as follows:
 | `0x1D`      | Fan                                    | Byte      | ❌ Not supported |
 | `0xFF`      | Unsupported                            | Byte      | N/A              |
 
-### PRO Design Pattern Exception:
-For PRO Design Patterns, the pixel data is longer and is followed by the same termination padding.  
-See below:  
-
-|  Offset & Range  | Data Purpose                       | Data Type |
-|      :---:       | :---                               | :---      |
-| `0x0A5 -> 0x8A4` | pixel data - (2048 bytes long)     | UInt8     |
-| `0x8A5 -> 0x8A7` | trailing padding - (3 bytes long)  | Byte      |
-
-### ACNH Design pattern Fix Conclusion:
-
-If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and inject it at offsets `0x54` and `0x38` respectively, then write these back to their correct location in `main.dat` (main pattern offset + index) we end up with a pattern written with the image we wanted, and the correct player and town IDs. Then we can overwrite the data at `0x70` with `0x00, 0x00, 0x00, 0x00`. This allows the user to own/edit them in-game.
-
-When you mix the pattern being updated with the players IDs correctly, and the IsEdited flags flipped to edited you get a correctly named and editable pattern imported into your save. Yay!
-
-PRO patterns follows a similar methodology, but with differing offsets. The above concept applied to them also works.  
-You can refer to NHSE offsets in the source for more info.
-
-This was fun to find and fix and I hope it is an educational reference in the future.
-
 Due to the QR code import in ACNH that supports ACNL designs, interoperability is supported and fairly straight forward.  
 See below for more information:
 
-### ACNL Interoperability
+
+## ACNL Interoperability
+
 Due to the QR code import in ACNH that supports ACNL designs, interoperability is fairly straight forward.  
 The ACNL design pattern data format shares similarities with the ACNH format in that it contains name strings, ID bytes, hashes, pattern type bytes, a color palette and pixel data.
 
 To convert the data between, you simply need to adjust values as required and move the data to the correct offsets.  
 The structure is per below:
 
-### ACNL Pattern Data:
+
+### ACNL Pattern Data
+
 |  Offset & Range  | Data Purpose                                                                | Data Type     |
 |      :---:       | :---                                                                        | :---          |
 | `0x000 -> 0x027` | pattern name (40 bytes long, 20 char name with separating `0x00`)           | ASCII/UTF-8   |
@@ -160,7 +205,9 @@ The same can be said for the ID bytes.
 
 Pattern types are cross supported (ACNH has pattern types for the ACNL patterns). Simply match up the type value correctly from each index.
 
-### ACNL Pattern Types Values:
+
+### ACNL Pattern Types Values
+
 | Index Value | Type Indicator            | Data Type | ACNH Equiv. |
 |    :---:    | :---                      | :---      | :---        |
 | `0x00`      | Long Sleeve Dress         | Byte      | ✔️ `0x13`   |
@@ -179,7 +226,8 @@ To convert from ACNH to ACNL format a closest matching color function needs to b
 To convert in the other direction, a straight conversion can be made by taking the index and it's known color value and writing out the three values.
 
 
-### ACNL Color Palette Index:
+### ACNL Color Palette Index
+
 Colors are in blocks of 9 per group from `0x00` -> `0x08` of each offset, with 1/15 of the grey block at `0x0F` of each offset (except for 0xFF).
 From `0x09` -> `0x0E` of each offset is unused data.
 
@@ -362,7 +410,8 @@ From `0x09` -> `0x0E` of each offset is unused data.
 | `0xF9` -> `0xFE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
 | `0xFF`           | Unused                               | ❌                                                                                | Displays white, but crashes on edit. | Unused    |
 
-#### Palette Common Representation:
+
+#### ACNL Palette Common Representation
 
 | Pink                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Red                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | Orange                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Peach                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | :---:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | :---:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | :---:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | :---:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
@@ -380,7 +429,8 @@ From `0x09` -> `0x0E` of each offset is unused data.
 | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFFFFF'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/EEEEEE'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDDDDD'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CCCDCC'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BBBBBB'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AAAAAA'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/999999'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/888888'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/777777'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/666666'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/555555'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/444444'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/333233'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/222222'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/000000'/> |
 
 
-#### Pattern Conversion Pseudocode:
+#### ACNL Pattern Conversion Pseudocode
+
 An example for converting from an ACNH to an ACNL format in C# style pseudocode is as follows:
 
 ```csharp
@@ -481,16 +531,20 @@ public Color[] ACNLColors = new Color[256]
 ```
 
 
-## QR Code Data Information:
+## QR Code Data Information
+
 For generation of QR Codes, the design pattern needs to be converted into ACNL format. 
 
-### Normal Design Pattern QR Codes:
+
+### Normal Design Pattern QR Codes
+
 For normal design patterns, the QR Code data needs to be encoded in raw bytes (620 bytes) and generated at a size of `700x700` with error correction level M (~15%).  
 Whatever library or code you are using for the QR Code generation should allow you to pass these options.  
 The data should be read from bytes into a (byte)bitmap and if an encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
 The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Code can then be generated.
 
 The output should be something like this:
+
 #### Normal/Simple Pattern
 #### Image:
 <img src="images/Audie_Normal.png" width="64" height="64"></img>
@@ -498,7 +552,9 @@ The output should be something like this:
 #### QR Code:
 <img src="images/Audie_Normal.QR.png" width="350" height="350"></img>
 
-### PRO Design Pattern QR Codes:
+
+### PRO Design Pattern QR Codes
+
 For PRO design patterns, the data needs to be split into 4 parts (540 bytes each) from `0x00`. This is used to generate 4 QR Codes using the structural append feature in QR Code.  
 Each QR Code needs to be a size of `400x400` and each one will require a sequence number, total number of symbols and parity value passed to it.  
 The parity value can be randomly generated and should be between 0 to 255.  
@@ -507,16 +563,10 @@ The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Cod
 The 4 QR Codes can then optionally be stitched into an `800x800` canvas to keep them stored together (like: `0,0; 0,1; 1,0; 1,1`).
 
 The output should be something like this:
+
 #### Short Sleeve Dress (3DS)
 #### Image:
 <img src="images/Audie_Pro.png" width="128" height="128"></img>
 
 #### QR Code:
 <img src="images/Audie_Pro.QR.png" width="400" height="400"></img>
-
-
-
-<!-- BUY ME A COFFEE -->
-## Help Support More Like This
-
-<a href="https://www.buymeacoffee.com/lottehime" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
