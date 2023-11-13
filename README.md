@@ -493,7 +493,7 @@ The output should be something like this:
 <img src="images/Audie_Pro.png"></img>
 
 #### QR Code:
-<img src="images/Audie_Pro.QR.png" width="350" height="350"></img>
+<img src="images/Audie_Pro.QR.png" width="400" height="400"></img>
 
 
 
