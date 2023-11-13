@@ -204,7 +204,8 @@ The structure is per below:
 For strings (names), either trim or expand them to match the format (ACNL -> ACNH expand, ACNH -> ACNL trim).  
 The same can be said for the ID bytes.
 
-Pattern types are cross supported (ACNH has pattern types for the ACNL patterns). Simply match up the type value correctly from each index.
+Pattern types are cross supported (ACNH has pattern types for the ACNL patterns).  
+Simply match up the type value correctly from each index.
 
 
 ### ACNL Pattern Types Values
