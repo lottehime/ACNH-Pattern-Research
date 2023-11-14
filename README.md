@@ -139,6 +139,7 @@ See below:
 ### ACNH Pattern Data Visual
 
 Below is a visualisation of the example `.nhd` included in the repo, with each data section highlighted:
+
 ![.NHD Hex](images/hex.PNG)
 
 
