@@ -458,7 +458,7 @@ From `0x09` -> `0x0E` of each offset is unused data.
 
 An example for converting from an ACNH to an ACNL format in C# style pseudocode is as follows:
 
-https://github.com/lottehime/ACNH-Pattern-Research/blob/63fccd1cbccd80499dc8a2dea9f6accb892acc97/acnl_convert_csharp_pseudo.cs#L1-L97
+https://github.com/lottehime/ACNH-Pattern-Research/blob/63fccd1cbccd80499dc8a2dea9f6accb892acc97/acnl_convert_csharp_pseudo.cs#L1-L203
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
