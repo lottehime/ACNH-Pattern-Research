@@ -38,6 +38,7 @@ Thanks!
     <li><a href="#acnh-design-pattern-data">ACNH Design Pattern Data</a></li>
     <ul>
     	<li><a href="#acnh-pro-design-pattern-exception">ACNH PRO Design Pattern Exception</a></li>
+        <li><a href="#acnh-pattern-data-visual">ACNH Pattern Data Visual</a></li>
     	<li><a href="#acnh-pattern-type-values">ACNH Pattern Type Values</a></li>
 	</ul>
     <li><a href="#acnl-interoperability">ACNL Interoperability</a></li>
@@ -135,6 +136,17 @@ See below:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### ACNH Pattern Data Visual
+
+Below is a visualisation of the example `.nhd` included in the repo, with each data section highlighted:
+![.NHD Hex](images/hex.PNG)
+
+
+Due to the QR code import in ACNH that supports ACNL designs, interoperability is supported and fairly straight forward.  
+See below for more information:
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### ACNH Pattern Type Values
 
 | Index Value | Type Indicator                         | Data Type | ACNL Equiv.      |
@@ -171,9 +183,6 @@ See below:
 | `0x1C`      | Flag                                   | Byte      | ❌ Not supported |
 | `0x1D`      | Fan                                    | Byte      | ❌ Not supported |
 | `0xFF`      | Unsupported                            | Byte      | N/A              |
-
-Due to the QR code import in ACNH that supports ACNL designs, interoperability is supported and fairly straight forward.  
-See below for more information:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
