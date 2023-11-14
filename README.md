@@ -472,7 +472,7 @@ For generation of QR Codes, the design pattern needs to be converted into ACNL f
 For normal design patterns, the QR Code data needs to be encoded in raw bytes (620 bytes) and generated at a size of `700x700` with error correction level M (~15%).  
 Whatever library or code you are using for the QR Code generation should allow you to pass these options.  
 The data should be read from bytes into a (byte)bitmap and if an encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
-The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Code can then be generated.
+The QR Code can then be generated.
 
 The output should be something like this:
 
@@ -487,12 +487,117 @@ The output should be something like this:
 
 ### PRO Design Pattern QR Codes
 
-For PRO design patterns, the data needs to be split into 4 parts (540 bytes each) from `0x00`. This is used to generate 4 QR Codes using the structural append feature in QR Code.  
+For PRO design pattern QR codes the pixel data needs to be arranged into different chunks of pixels.
+
+### For non-standee patterns:
+
+Imagine that the whole 64x64 image is split into quadrants, and then imagine that the bottom quadrants are split in half vertically, which leaves you something like this:  
+🟦🟦🟨🟨  
+🟦🟦🟨🟨  
+🟥🟥🟪🟪  
+🟩🟩🟧🟧
+
+Let's identify them as such:  
+* 🟦: Q1
+* 🟨: Q2
+* 🟥: Q3a
+* 🟪: Q4a
+* 🟩: Q3b
+* 🟧: Q4b
+
+They can be presented as a dictionary like below:  
+```
+// Expressed as:
+// { (AddrStart, AddrEnd), AddrDestination }
+
+// Front Chunk (Q1)
+{ ( 0x000, 0x200), 0x200 }, 
+
+// Back Chunk (Q2)
+{ ( 0x200, 0x400), 0x000 },
+
+// Front Bottom Chunk (Q3b)
+{ ( 0x600, 0x700), 0x600 },
+
+// Back Bottom Chunk (Q4b)
+{ ( 0x700, 0x800), 0x400 },
+
+// Left Sleeve Chunk (Q3a)
+{ ( 0x400, 0x500), 0x500 },
+
+// Right Sleeve Chunk (Q4a)
+{ ( 0x500, 0x600), 0x700 },
+```
+
+We need to move the chunks as follows:
+* Q2 and Q1 need to swap position.
+* Q3b needs to move to Q3a.
+* Q3a needs to move to Q4b.
+* Q4b needs to move to Q3b.
+* Q4a is in it's correct position.
+
+Our new chunk arrangement should be arranged as such:  
+🟨🟨🟦🟦  
+🟨🟨🟦🟦  
+🟩🟩🟪🟪  
+🟧🟧🟥🟥
+
+
+### For standee patterns:
+
+Imagine that the whole 64x64 image is split into quadrants, which leaves you something like this:  
+🟦🟨  
+🟥🟪
+
+Let's identify them as such:  
+* 🟦: Q1
+* 🟨: Q2
+* 🟥: Q3
+* 🟪: Q4
+
+They can be presented as a dictionary like below:  
+```
+// Expressed as:
+// { (AddrStart, AddrEnd), AddrDestination }
+
+// Top Left Chunk (Q1)
+{ ( 0x000, 0x200), 0x000 }, 
+
+// Bottom Left Chunk (Q3)
+{ ( 0x200, 0x400), 0x400 },
+
+// Top Right Chunk (Q2)
+{ ( 0x400, 0x600), 0x200 },
+
+// Bottom Right Chunk (Q4)
+{ ( 0x600, 0x800), 0x600 },
+```
+
+We need to move the chunks as follows:
+* Q1 is in it's correct position.
+* Q2 and Q3 need to swap position.
+* Q4 is in it's correct position.
+
+Our new chunk arrangement should be arranged as such:  
+🟦🟥  
+🟨🟪
+
+After that, the whole data array needs to be split into 4 parts (540 bytes each) from `0x00`. This is used to generate 4 QR Codes using the structural append feature in QR Code.
+
+
 Each QR Code needs to be a size of `400x400` and each one will require a sequence number, total number of symbols and parity value passed to it.  
 The parity value can be randomly generated and should be between 0 to 255.  
 Error correction level M (~15%) is required as above and each of the data parts should be read from bytes into a (byte)bitmap and if an encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
-The (byte)bitmap then needs to be flipped on the Y axis for encoding. The QR Code can then be generated.
-The 4 QR Codes can then optionally be stitched into an `800x800` canvas to keep them stored together (like: `0,0; 0,1; 1,0; 1,1`).
+The QR Code can then be generated.
+The 4 QR Codes can then optionally be stitched into an `800x800` canvas to keep them stored together like below:
+
+🟨🟩  
+🟦🟪
+
+* 🟨: Sequence 1 QR Code
+* 🟩: Sequence 2 QR Code
+* 🟦: Sequence 3 QR Code
+* 🟪: Sequence 4 QR Code
 
 The output should be something like this:
 
