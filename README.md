@@ -1,3 +1,5 @@
+<a name="readme-top"></a>
+
 # ACNH-Pattern-Research
 Research on Animal Crossing: New Horizons design pattern data.
 
@@ -53,6 +55,7 @@ Thanks!
 	</ul>
 </ol>
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## ACNH General Design Pattern Info
 
@@ -82,6 +85,7 @@ Complete untrimmed pattern data is 680 bytes long, starting with a 16 byte hash 
 This format matches what you will find in `*.acnh` files from https://acpatterns.com/ and `*.nhd` files from NHSE, files from other editors may be trimmed.  
 We can use a `*.nhd` file to isolate the data we are interested in.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNH Design Pattern Fix Conclusion
 
@@ -96,6 +100,7 @@ This was fun to find and fix and I hope it is an educational reference in the fu
 
 The structure of the design pattern file/data is explained below: 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNH Design Pattern Data
 
@@ -116,6 +121,7 @@ The structure of the design pattern file/data is explained below:
 | `0x0A5 -> 0x2A4` | pixel data - (512 bytes long, pro designs except this, see below)    | UInt8         |
 | `0x2A5 -> 0x2A7` | trailing padding - (3 bytes long)                                    | Byte          |
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNH PRO Design Pattern Exception
 
@@ -127,6 +133,7 @@ See below:
 | `0x0A5 -> 0x8A4` | pixel data - (2048 bytes long)     | UInt8     |
 | `0x8A5 -> 0x8A7` | trailing padding - (3 bytes long)  | Byte      |
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNH Pattern Type Values
 
@@ -168,6 +175,7 @@ See below:
 Due to the QR code import in ACNH that supports ACNL designs, interoperability is supported and fairly straight forward.  
 See below for more information:
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## ACNL Interoperability
 
@@ -177,6 +185,7 @@ The ACNL design pattern data format shares similarities with the ACNH format in 
 To convert the data between, you simply need to adjust values as required and move the data to the correct offsets.  
 The structure is per below:
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNL Pattern Data
 
@@ -207,6 +216,7 @@ The same can be said for the ID bytes.
 Pattern types are cross supported (ACNH has pattern types for the ACNL patterns).  
 Simply match up the type value correctly from each index.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNL Pattern Types Values
 
@@ -227,6 +237,7 @@ The color palette for ACNL is comprised of 159 fixed colors with an index to be 
 To convert from ACNH to ACNL format a closest matching color function needs to be run against the ACNH color to find the closest one in the ACNL index for each of the 15 colors. The color is then represented in the palette as that single index byte instead of the 3 bytes for RGB used by ACNH.  
 To convert in the other direction, a straight conversion can be made by taking the index and it's known color value and writing out the three values.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNL Color Palette Index
 
@@ -412,6 +423,7 @@ From `0x09` -> `0x0E` of each offset is unused data.
 | `0xF9` -> `0xFE` | Unused                               | ❌                                                                                | Unused                               | Unused    |
 | `0xFF`           | Unused                               | ❌                                                                                | Displays white, but crashes on edit. | Unused    |
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNL Palette Common Representation
 
@@ -430,6 +442,7 @@ From `0x09` -> `0x0E` of each offset is unused data.
 | :---: |
 | <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/FFFFFF'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/EEEEEE'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/DDDDDD'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/CCCDCC'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/BBBBBB'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/AAAAAA'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/999999'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/888888'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/777777'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/666666'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/555555'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/444444'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/333233'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/222222'/> <img valign='middle' alt='blue' src='https://readme-swatches.vercel.app/000000'/> |
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### ACNL Pattern Conversion Pseudocode
 
@@ -497,7 +510,7 @@ public void ConvertACPattern()
     }
     Array.Copy(ACNLpalette, 0x00, ACNLpattern, 0x58, 15);  // Store them
     
-    Array.Copy(ACNHpattern, 0xA5, ACNLpattern, 0x6C, 512); // PixelData
+    Array.Copy(ACNHpattern, 0xA5, ACNLpattern, 0x6C, 512); // Pixel Data
 }
 
 public byte GetNearestColor(byte R, byte G, byte B)
@@ -532,6 +545,7 @@ public Color[] ACNLColors = new Color[256]
 
 ```
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## QR Code Data Information
 
@@ -554,6 +568,7 @@ The output should be something like this:
 #### QR Code:
 <img src="images/Audie_Normal.QR.png" width="350" height="350"></img>
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### PRO Design Pattern QR Codes
 
@@ -572,3 +587,5 @@ The output should be something like this:
 
 #### QR Code:
 <img src="images/Audie_Pro.QR.png" width="400" height="400"></img>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
