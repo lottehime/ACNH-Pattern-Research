@@ -121,30 +121,30 @@ public class ACNLConvertExample
 
         Dictionary<(int, int), int> OffsetsProTexChunk = new Dictionary<(int, int), int>()
         {
-          // Front Chunk
-          { ( 0x000, 0x200), 0x200 }, 
-          // Back Chunk
-          { ( 0x200, 0x400), 0x000 },
-          // Front Bottom Chunk
-          { ( 0x600, 0x700), 0x600 },
-          // Back Bottom Chunk
-          { ( 0x700, 0x800), 0x400 },
-          // Left Sleeve Chunk
-          { ( 0x400, 0x500), 0x500 },
-          // Right Sleeve Chunk
-          { ( 0x500, 0x600), 0x700 },
+            // Front Chunk
+            { ( 0x000, 0x200), 0x200 }, 
+            // Back Chunk
+            { ( 0x200, 0x400), 0x000 },
+            // Front Bottom Chunk
+            { ( 0x600, 0x700), 0x600 },
+            // Back Bottom Chunk
+            { ( 0x700, 0x800), 0x400 },
+            // Left Sleeve Chunk
+            { ( 0x400, 0x500), 0x500 },
+            // Right Sleeve Chunk
+            { ( 0x500, 0x600), 0x700 },
         };
 
         Dictionary<(int, int), int> OffsetsProStandeeTexChunk = new Dictionary<(int, int), int>()
         {
-        // Top Left Chunk
-        { ( 0x000, 0x200), 0x000 }, 
-        // Bottom Left Chunk
-        { ( 0x200, 0x400), 0x400 },
-        // Top Right Chunk
-        { ( 0x400, 0x600), 0x200 },
-        // Bottom Right Chunk
-        { ( 0x600, 0x800), 0x600 }
+            // Top Left Chunk
+            { ( 0x000, 0x200), 0x000 }, 
+            // Bottom Left Chunk
+            { ( 0x200, 0x400), 0x400 },
+            // Top Right Chunk
+            { ( 0x400, 0x600), 0x200 },
+            // Bottom Right Chunk
+            { ( 0x600, 0x800), 0x600 }
         };
 
         // Check data type
