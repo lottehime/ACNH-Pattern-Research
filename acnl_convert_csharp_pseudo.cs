@@ -150,37 +150,42 @@ public class ACNLConvertExample
         // Check data type
         if (data[0x69] != 0x06 && data[0x69] != 0x07)
         {
+            // Iterate pixels
             for (var y = 0; y < 64; y++)
             {
                 for (var x = 0; x < 64 / 2; x++)
                 {
-                    if (data[0x69] != 0x06 && data[0x69] != 0x07) // Ain't a hat? Off we hack!
+                    // Ain't a hat? Off we hack!
+                    if (data[0x69] != 0x06 && data[0x69] != 0x07)
                     {
+                        // Grab offsets for chunks
                         var offset = (x >= 64 / 4 ? 0x200 : 0x0) + (y >= 64 / 2 ? 0x400 : 0x0);
                         int index = offset + x % (64 / 4) + (y % (64 / 2)) * (64 / 4);
-                        if (data[0x69] == 0x08)
+                        if (data[0x69] == 0x08) // If it's a standee
                         {
                             var newIndex = index;
                             foreach (var kvp in OffsetsProStandeeTexChunk)
                             {
+                                // Match up chunks
                                 if (index >= kvp.Value && index < kvp.Value + (kvp.Key.Item2 - kvp.Key.Item1))
                                 {
                                     newIndex = (index - kvp.Value) + kvp.Key.Item1;
                                 }
                             }
-                            dataSorted[0x6C + newIndex] = data[0x6C + index];
+                            dataSorted[0x6C + newIndex] = data[0x6C + index]; // Place chunks
                         }
                         else
                         {
                             var newIndex = index;
                             foreach (var kvp in OffsetsProTexChunk)
                             {
+                                // Match up chunks
                                 if (index >= kvp.Value && index < kvp.Value + (kvp.Key.Item2 - kvp.Key.Item1))
                                 {
                                     newIndex = (index - kvp.Value) + kvp.Key.Item1;
                                 }
                             }
-                            dataSorted[0x6C + newIndex] = data[0x6C + index];
+                            dataSorted[0x6C + newIndex] = data[0x6C + index]; // Place chunks
                         }
                     }
                 }
@@ -188,6 +193,7 @@ public class ACNLConvertExample
         }
         else
         {
+            // It's a hat? Cut it back!
             Array.Copy(data, 0x6C, dataSorted, 0x6C, 0x200);
         }
 
