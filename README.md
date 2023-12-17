@@ -90,7 +90,7 @@ We can use a `*.nhd` file to isolate the data we are interested in.
 
 ### ACNH Design Pattern Fix Conclusion
 
-If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and inject it at offsets `0x54` and `0x38` respectively, then write these back to their correct location in `main.dat` (main pattern offset + index) we end up with a pattern written with the image we wanted, and the correct player and town IDs. Then we can overwrite the data at `0x70` with `0x00, 0x00, 0x00, 0x00`. This allows the user to own/edit them in-game.
+If we take the `PlayerID` and `TownID` data extracted from `personal.dat` and inject it at offsets `0x54` and `0x38` respectively, then write these back to their correct location in `main.dat` (main pattern offset + index) we end up with a pattern written with the image we wanted, and the correct player and town IDs. Then we can overwrite the data at `0x70` with `0x02, 0xEE, 0x00, 0x00`. This allows the user to own/edit them in-game and placed version will maintain their transparency.
 
 When you mix the pattern being updated with the players IDs correctly, and the IsEdited flags flipped to edited you get a correctly named and editable pattern imported into your save. Yay!
 
@@ -115,7 +115,7 @@ The structure of the design pattern file/data is explained below:
 | `0x054 -> 0x057` | player ID - (4 bytes long)                                           | UInt16/UInt32 |
 | `0x058 -> 0x06B` | player name - (20 bytes long, 10 char name with separating `0x00`)   | ASCII/UTF-8   |
 | `0x06C -> 0x06F` | padding? - (4 bytes long)                                            | Byte          |
-| `0x070 -> 0x073` | ownership flag? - (4 bytes long)                                     | Byte          |
+| `0x070 -> 0x073` | ownership & placement flag - (4 bytes long)                          | Byte          |
 | `0x074 -> 0x076` | padding? - (3 bytes long)                                            | Byte          |
 | `0x077 -> 0x077` | pattern type - (1 byte long, see below)                              | Byte          |
 | `0x078 -> 0x0A4` | palette data - (45 bytes long, 15*3, 15 colors 3 bytes each (rgb))   | UInt8         |
