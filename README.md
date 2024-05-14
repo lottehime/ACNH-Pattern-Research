@@ -188,8 +188,7 @@ See below for more information:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## ACNL Interoperability
-
-Due to the QR code import in ACNH that supports ACNL designs, interoperability is fairly straight forward.  
+ 
 The ACNL design pattern data format shares similarities with the ACNH format in that it contains name strings, ID bytes, hashes, pattern type bytes, a color palette and pixel data.
 
 To convert the data between, you simply need to adjust values as required and move the data to the correct offsets.  
@@ -471,7 +470,7 @@ For generation of QR Codes, the design pattern needs to be converted into ACNL f
 
 For normal design patterns, the QR Code data needs to be encoded in raw bytes (620 bytes) and generated at a size of `700x700` with error correction level M (~15%).  
 Whatever library or code you are using for the QR Code generation should allow you to pass these options.  
-The data should be read from bytes into a (byte)bitmap and if an encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
+The data should be read from bytes into a (byte)bitmap and if encoding to a string is required for reading into it with your library, `ISO-8859-1` is recommended.  
 The QR Code can then be generated.
 
 The output should be something like this:
@@ -491,7 +490,7 @@ For PRO design pattern QR codes the pixel data needs to be arranged into differe
 
 ### For non-standee patterns:
 
-Imagine that the whole 64x64 image is split into quadrants, and then imagine that the bottom quadrants are split in half vertically, which leaves you something like this:  
+Imagine that the whole 64x64 image is split into quadrants, and then imagine that the bottom quadrants are split in half horizontally, which leaves you something like this:  
 🟦🟦🟨🟨  
 🟦🟦🟨🟨  
 🟥🟥🟪🟪  
